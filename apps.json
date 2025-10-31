@@ -6,13 +6,11 @@
     "version": "15.84.0"
   },
   {
-    "url": "https://github.com/frappe/hrms",
-    "branch": "version-15",
-    "commit_hash": "15a147224465681bfdddcb33c0017aab623cde54",
-    "version": "15.52.0"
+    "url": "https://github.com/frappe/crm.git",
+    "branch": "v1.54.0"
   },
   {
-    "url": "https://github.com/deepzide/customer_poc",
+    "url": "https://github.com/deepzide/acuamania_custom.git",
     "branch": "main"
   }
 ]
