@@ -137,13 +137,13 @@ app_license = "unlicense"
 # ---------------
 # Hook on document methods and events
 
-# doc_events = {
-# 	"*": {
-# 		"on_update": "method",
-# 		"on_cancel": "method",
-# 		"on_trash": "method"
-# 	}
-# }
+doc_events = {
+    "Lead": {
+        "validate": "acuamania.validations.lead.validate_lead.validate_lead",
+        "after_insert": "acuamania.events.lead.after_insert.after_insert",
+    }
+}
+
 
 # Scheduled Tasks
 # ---------------
