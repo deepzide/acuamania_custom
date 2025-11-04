@@ -4,7 +4,8 @@
 
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
-acuamania.patches.sync_lead_sources 5.0
-acuamania.patches.disable_autocreate_contact 1.0
-acuamania.patches.lead_custom_fields.add_custom_contact_name 1.0
-acuamania.patches.lead_custom_fields.set_mobile_no_to_hidden 1.0
+acuamania.patches.load_lead_sources 5.0
+acuamania.patches.disable_auto_contact_creation 1.0
+acuamania.patches.hide_lead_mobile_no 1.0
+acuamania.patches.custom_fields.add_lead_custom_contact_name 1.0
+acuamania.patches.custom_fields.add_custom_customer_category 1.0
