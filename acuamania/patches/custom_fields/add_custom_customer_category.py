@@ -5,7 +5,7 @@ LABEL = "Customer Category"
 FIELD_TYPE = "Table MultiSelect"
 OPTIONS = "Customer__Customer_Category"
 INSERT_AFTER = "customer_name"
-TARGET_DOCTYPES = ["Customer", "Contact"]
+TARGET_DOCTYPES = ["Customer", "Contact", "Lead"]
 
 def execute():
     try:

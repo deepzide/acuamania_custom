@@ -1,6 +1,6 @@
 import frappe
 import unittest
-from acuamania.patches import hide_mobile_no_in_lead as patch
+from acuamania.patches import hide_lead_mobile_no as patch
 
 LEAD_DOCTYPE = "Lead"
 FIELDNAME = "mobile_no"
