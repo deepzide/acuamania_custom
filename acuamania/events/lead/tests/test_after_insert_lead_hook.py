@@ -1,70 +1,74 @@
 import frappe
-from frappe.tests.utils import FrappeTestCase
+import unittest
+from frappe.exceptions import ValidationError
+
+LEAD_DOCTYPE = "Lead"
+CONTACT_DOCTYPE = "Contact"
+CUSTOM_CONTACT_LINK_FIELD = "custom_contact_name"
 
 
-class TestBeforeInsertLeadHook(FrappeTestCase):
-    """Validate that before_insert hook classifies Lead, Contact, and Customer correctly."""
-
+class TestLeadContactCreation(unittest.TestCase):
     def setUp(self):
-        """Initialize test data with a unique phone number."""
-        self.phone_number = "099000001"
-        self.lead_1 = None
-        self.lead_2 = None
-        self.contact = None
-        self.customer = None
+        frappe.db.rollback()
+        self.phone_number = "099999999"
+        self.email = "lead_test@example.com"
+        frappe.db.delete(LEAD_DOCTYPE, {"phone": self.phone_number})
+        frappe.db.delete(CONTACT_DOCTYPE, {"phone": self.phone_number})
+        frappe.db.commit()
+
 
     def tearDown(self):
-        """Remove only records created by this test."""
-        for record in [self.lead_1, self.lead_2, self.customer]:
-            if record:
-                frappe.delete_doc_if_exists(record.doctype, record.name, force=True)
+        frappe.db.rollback()
 
-        if self.contact:
-            frappe.delete_doc_if_exists("Contact", self.contact.name, force=True)
 
-        frappe.db.commit()
+    def test_contact_created_when_lead_inserted(self):
+        lead = frappe.get_doc({
+            "doctype": LEAD_DOCTYPE,
+            "first_name": "Auto Contact Lead",
+            "phone": self.phone_number,
+            "email_id": self.email
+        })
+        lead.insert(ignore_permissions=True)
+        contact_name = frappe.db.exists(CONTACT_DOCTYPE, {"phone": self.phone_number})
+        self.assertTrue(contact_name)
+        lead.reload()
+        self.assertEqual(lead.get(CUSTOM_CONTACT_LINK_FIELD), contact_name)
 
-    def test_first_lead_classified_as_nuevo(self):
-        """The first Lead for a new phone should be classified only as Nuevo."""
-        self.lead_1 = frappe.get_doc({
-            "doctype": "Lead",
-            "lead_name": "First Lead",
-            "phone": self.phone_number
-        }).insert(ignore_permissions=True)
 
-        categories = [row.customer_category for row in self.lead_1.custom_customer_category]
-        self.assertEqual(categories, ["Nuevo"], "Lead should have only 'Nuevo' category on first insertion")
+    def test_existing_contact_reused(self):
+        first_lead = frappe.get_doc({
+            "doctype": LEAD_DOCTYPE,
+            "first_name": "First Lead",
+            "phone": self.phone_number,
+            "email_id": "first@example.com"
+        })
+        first_lead.insert(ignore_permissions=True)
+        first_lead.reload()
+        first_contact_name = first_lead.get(CUSTOM_CONTACT_LINK_FIELD)
+        self.assertTrue(first_contact_name)
 
-    def test_second_lead_classified_as_recurrente_and_updates_contact_and_customer(self):
-        """The second Lead for an existing phone should classify all related docs as only Recurrente."""
-        self.lead_1 = frappe.get_doc({
-            "doctype": "Lead",
-            "lead_name": "First Lead",
-            "phone": self.phone_number
-        }).insert(ignore_permissions=True)
-        frappe.db.commit()
+        second_lead = frappe.get_doc({
+            "doctype": LEAD_DOCTYPE,
+            "first_name": "Second Lead",
+            "phone": self.phone_number,
+            "email_id": "second@example.com"
+        })
+        second_lead.insert(ignore_permissions=True)
+        second_lead.reload()
 
-        contact_name = frappe.db.get_value("Contact", {"phone": self.phone_number}, "name")
-        self.assertTrue(contact_name, "Contact should exist after first Lead insertion")
-        self.contact = frappe.get_doc("Contact", contact_name)
+        self.assertEqual(second_lead.get(CUSTOM_CONTACT_LINK_FIELD), first_contact_name)
 
-        self.customer = frappe.get_doc({
-            "doctype": "Customer",
-            "customer_name": "Test Customer",
-            "customer_primary_contact": self.contact.name
-        }).insert(ignore_permissions=True)
-        frappe.db.commit()
+        contacts_with_phone = frappe.get_all(
+            CONTACT_DOCTYPE,
+            filters={"phone": self.phone_number},
+            pluck="name"
+        )
+        self.assertEqual(len(contacts_with_phone), 1)
 
-        self.lead_2 = frappe.get_doc({
-            "doctype": "Lead",
-            "lead_name": "Second Lead",
-            "phone": self.phone_number
-        }).insert(ignore_permissions=True)
 
-        lead2_categories = [row.customer_category for row in self.lead_2.custom_customer_category]
-        contact_categories = [row.customer_category for row in self.contact.reload().custom_customer_category]
-        customer_categories = [row.customer_category for row in self.customer.reload().custom_customer_category]
-
-        self.assertEqual(lead2_categories, ["Recurrente"], "Lead should have only 'Recurrente' after contact exists")
-        self.assertEqual(contact_categories, ["Recurrente"], "Contact should have only 'Recurrente'")
-        self.assertEqual(customer_categories, ["Recurrente"], "Customer should have only 'Recurrente'")
+    def test_lead_without_phone_raises_error(self):
+        with self.assertRaises(ValidationError):
+            frappe.get_doc({
+                "doctype": LEAD_DOCTYPE,
+                "first_name": "No Phone Lead"
+            }).insert(ignore_permissions=True)

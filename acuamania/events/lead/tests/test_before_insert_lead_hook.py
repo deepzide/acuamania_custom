@@ -13,6 +13,7 @@ class TestBeforeInsertLeadHook(FrappeTestCase):
         self.contact = None
         self.customer = None
 
+
     def tearDown(self):
         """Remove only records created by this test."""
         for record in [self.lead_1, self.lead_2, self.customer]:
@@ -24,20 +25,26 @@ class TestBeforeInsertLeadHook(FrappeTestCase):
 
         frappe.db.commit()
 
+
     def test_first_lead_classified_as_nuevo(self):
-        """The first Lead for a new phone should be classified as Nuevo."""
+        """A new Lead should include 'Nuevo' but never 'Recurrente'."""
         self.lead_1 = frappe.get_doc({
             "doctype": "Lead",
             "lead_name": "First Lead",
-            "phone": self.phone_number
+            "phone": self.phone_number,
+            "custom_qty_person": 3,
+            "custom_has_hotel_voucher": 1,
+            "custom_has_active_convenio": 0
         }).insert(ignore_permissions=True)
 
         categories = [row.customer_category for row in self.lead_1.custom_customer_category]
-        self.assertIn("Nuevo", categories)
-        self.assertNotIn("Recurrente", categories)
+
+        self.assertIn("Nuevo", categories, "Lead should include 'Nuevo' when no existing Contact.")
+        self.assertNotIn("Recurrente", categories, "Lead should not include 'Recurrente' on first creation.")
+
 
     def test_second_lead_classified_as_recurrente_and_updates_contact_and_customer(self):
-        """The second Lead for an existing phone should classify Lead, Contact, and Customer as Recurrente."""
+        """The second Lead for an existing phone should classify all related docs as only Recurrente."""
         self.lead_1 = frappe.get_doc({
             "doctype": "Lead",
             "lead_name": "First Lead",
@@ -66,6 +73,6 @@ class TestBeforeInsertLeadHook(FrappeTestCase):
         contact_categories = [row.customer_category for row in self.contact.reload().custom_customer_category]
         customer_categories = [row.customer_category for row in self.customer.reload().custom_customer_category]
 
-        self.assertIn("Recurrente", lead2_categories)
-        self.assertIn("Recurrente", contact_categories)
-        self.assertIn("Recurrente", customer_categories)
+        self.assertEqual(lead2_categories, ["Recurrente"], "Lead should have only 'Recurrente' after contact exists")
+        self.assertEqual(contact_categories, ["Recurrente"], "Contact should have only 'Recurrente'")
+        self.assertEqual(customer_categories, ["Recurrente"], "Customer should have only 'Recurrente'")
