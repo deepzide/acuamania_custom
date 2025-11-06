@@ -13,5 +13,4 @@ acuamania.patches.load_lead_sources 5.0
 acuamania.patches.load_customer_categories 2.0
 
 # Add custom fields to core doctypes patches
-acuamania.patches.custom_fields.add_lead_custom_contact_name 2.0
-acuamania.patches.custom_fields.add_custom_customer_category 2.0
+acuamania.patches.add_custom_fields
