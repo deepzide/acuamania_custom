@@ -141,6 +141,7 @@ doc_events = {
     "Lead": {
         "validate": "acuamania.validations.lead.validate_lead.validate_lead",
         "after_insert": "acuamania.events.lead.after_insert.after_insert",
+        "before_insert": "acuamania.events.lead.before_insert.before_insert",
     }
 }
 

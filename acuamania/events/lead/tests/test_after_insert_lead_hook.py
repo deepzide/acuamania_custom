@@ -16,8 +16,10 @@ class TestLeadContactCreation(unittest.TestCase):
         frappe.db.delete(CONTACT_DOCTYPE, {"phone": self.phone_number})
         frappe.db.commit()
 
+
     def tearDown(self):
         frappe.db.rollback()
+
 
     def test_contact_created_when_lead_inserted(self):
         lead = frappe.get_doc({
@@ -31,6 +33,7 @@ class TestLeadContactCreation(unittest.TestCase):
         self.assertTrue(contact_name)
         lead.reload()
         self.assertEqual(lead.get(CUSTOM_CONTACT_LINK_FIELD), contact_name)
+
 
     def test_existing_contact_reused(self):
         first_lead = frappe.get_doc({
@@ -61,6 +64,7 @@ class TestLeadContactCreation(unittest.TestCase):
             pluck="name"
         )
         self.assertEqual(len(contacts_with_phone), 1)
+
 
     def test_lead_without_phone_raises_error(self):
         with self.assertRaises(ValidationError):

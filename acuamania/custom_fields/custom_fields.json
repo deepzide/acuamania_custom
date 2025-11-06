@@ -1,0 +1,98 @@
+{
+  "Lead": [
+    {
+      "fieldname": "custom_customer_category",
+      "label": "Categoría del Cliente",
+      "fieldtype": "Table MultiSelect",
+      "options": "Customer__Customer_Category",
+      "insert_after": "customer_name"
+    },
+    {
+      "fieldname": "custom_qty_person",
+      "label": "Cantidad de Personas",
+      "fieldtype": "Int",
+      "reqd": 1,
+      "default": 1,
+      "insert_after": "phone"
+    },
+    {
+      "fieldname": "custom_has_hotel_voucher",
+      "label": "Posee Voucher de Hotel",
+      "fieldtype": "Check",
+      "insert_after": "custom_qty_person"
+    },
+    {
+      "fieldname": "custom_has_active_convenio",
+      "label": "Tiene Convenio Activo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "custom_contact_name",
+      "label": "Nombre del Contacto",
+      "fieldtype": "Link",
+      "options": "Contact",
+      "insert_after": "email_id"
+    },
+    {
+      "fieldname": "is_corpo",
+      "label": "Es Corporativo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_active_convenio"
+    }
+  ],
+  "Contact": [
+    {
+      "fieldname": "custom_customer_category",
+      "label": "Categoría del Cliente",
+      "fieldtype": "Table MultiSelect",
+      "options": "Customer__Customer_Category",
+      "insert_after": "first_name"
+    },
+    {
+      "fieldname": "custom_has_hotel_voucher",
+      "label": "Posee Voucher de Hotel",
+      "fieldtype": "Check",
+      "insert_after": "custom_customer_category"
+    },
+    {
+      "fieldname": "custom_has_active_convenio",
+      "label": "Tiene Convenio Activo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "is_corpo",
+      "label": "Es Corporativo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_active_convenio"
+    }
+  ],
+  "Customer": [
+    {
+      "fieldname": "custom_customer_category",
+      "label": "Categoría del Cliente",
+      "fieldtype": "Table MultiSelect",
+      "options": "Customer__Customer_Category",
+      "insert_after": "customer_name"
+    },
+    {
+      "fieldname": "custom_has_hotel_voucher",
+      "label": "Posee Voucher de Hotel",
+      "fieldtype": "Check",
+      "insert_after": "custom_customer_category"
+    },
+    {
+      "fieldname": "custom_has_active_convenio",
+      "label": "Tiene Convenio Activo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "is_corpo",
+      "label": "Es Corporativo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_active_convenio"
+    }
+  ]
+}
