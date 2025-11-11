@@ -11,6 +11,7 @@ acuamania.patches.hide_lead_mobile_no 3.0
 # Load nomenclators patches
 acuamania.patches.load_lead_sources 4.0
 acuamania.patches.load_customer_categories 3.0
+acuamania.patches.load_territories 1.9
 
 # Add custom fields to core doctypes patches
-acuamania.patches.add_custom_fields 1.2
+acuamania.patches.add_custom_fields 70
