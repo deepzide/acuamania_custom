@@ -142,30 +142,38 @@ doc_events = {
         "validate": "acuamania.validations.lead.validate_lead.validate_lead",
         "after_insert": "acuamania.events.lead.after_insert.after_insert",
         "before_insert": "acuamania.events.lead.before_insert.before_insert",
-    }
+    },
+    "Contact": {
+        "before_save": "acuamania.events.contact.before_save.before_save",
+        "after_save": "acuamania.events.contact.after_save.after_save",
+        "before_insert": "acuamania.events.contact.before_insert.before_insert",
+    },
+    "Sales Order": {
+        "before_save": "acuamania.events.sales_order.before_save.before_save",
+    },
 }
 
 
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"acuamania.tasks.all"
-# 	],
-# 	"daily": [
-# 		"acuamania.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"acuamania.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"acuamania.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"acuamania.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	# "all": [
+	# 	"acuamania.tasks.all"
+	# ],
+	"daily": [
+		"acuamania.tasks.daily.save_transcriptions.save_transcriptions"
+	],
+	# "hourly": [
+	# 	"acuamania.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"acuamania.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"acuamania.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------

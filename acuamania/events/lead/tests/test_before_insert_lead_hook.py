@@ -28,7 +28,7 @@ class TestLeadClassificationFlow(FrappeTestCase):
         """A new Lead should include 'Nuevo' but never 'Recurrente'."""
         self.lead_1 = frappe.get_doc({
             "doctype": "Lead",
-            "lead_name": "First Lead",
+            "first_name": "First Lead",
             "phone": self.phone_number,
             "custom_qty_person": 3,
             "custom_has_hotel_voucher": 1,
@@ -47,7 +47,7 @@ class TestLeadClassificationFlow(FrappeTestCase):
         """After insert, the newly created Contact should mirror the Lead classifications."""
         self.lead_1 = frappe.get_doc({
             "doctype": "Lead",
-            "lead_name": "First Lead",
+            "first_name": "First Lead",
             "phone": self.phone_number,
             "custom_qty_person": 2,
             "custom_has_hotel_voucher": 1,
@@ -74,7 +74,7 @@ class TestLeadClassificationFlow(FrappeTestCase):
         """The second Lead for an existing phone should classify all related docs as only Recurrente."""
         self.lead_1 = frappe.get_doc({
             "doctype": "Lead",
-            "lead_name": "First Lead",
+            "first_name": "First Lead",
             "phone": self.phone_number
         }).insert(ignore_permissions=True)
         frappe.db.commit()
@@ -92,7 +92,7 @@ class TestLeadClassificationFlow(FrappeTestCase):
 
         self.lead_2 = frappe.get_doc({
             "doctype": "Lead",
-            "lead_name": "Second Lead",
+            "first_name": "Second Lead",
             "phone": self.phone_number
         }).insert(ignore_permissions=True)
         frappe.db.commit()
