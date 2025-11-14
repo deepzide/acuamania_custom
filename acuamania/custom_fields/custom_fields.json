@@ -43,6 +43,13 @@
   ],
   "Contact": [
     {
+      "fieldname": "custom_transcriptions",
+      "label": "Transcription Items",
+      "fieldtype": "Table",
+      "options": "Contact Transcription Item",
+      "insert_after": "custom_transcription_text"
+    },
+    {
       "fieldname": "custom_phone",
       "label": "Teléfono Custom",
       "fieldtype": "Data",
@@ -92,6 +99,12 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_active_convenio"
+    },
+    {
+      "fieldname": "custom_transcription_text",
+      "label": "Texto de Transcripción",
+      "fieldtype": "Text",
+      "insert_after": "image"
     }
   ],
   "Sales Order": [

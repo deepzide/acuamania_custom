@@ -157,23 +157,23 @@ doc_events = {
 # Scheduled Tasks
 # ---------------
 
-# scheduler_events = {
-# 	"all": [
-# 		"acuamania.tasks.all"
-# 	],
-# 	"daily": [
-# 		"acuamania.tasks.daily"
-# 	],
-# 	"hourly": [
-# 		"acuamania.tasks.hourly"
-# 	],
-# 	"weekly": [
-# 		"acuamania.tasks.weekly"
-# 	],
-# 	"monthly": [
-# 		"acuamania.tasks.monthly"
-# 	],
-# }
+scheduler_events = {
+	# "all": [
+	# 	"acuamania.tasks.all"
+	# ],
+	"daily": [
+		"acuamania.tasks.daily.save_transcriptions.save_transcriptions"
+	],
+	# "hourly": [
+	# 	"acuamania.tasks.hourly"
+	# ],
+	# "weekly": [
+	# 	"acuamania.tasks.weekly"
+	# ],
+	# "monthly": [
+	# 	"acuamania.tasks.monthly"
+	# ],
+}
 
 # Testing
 # -------

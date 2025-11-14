@@ -42,7 +42,7 @@ class TestContactPropagation(FrappeTestCase):
             "email_id": "alice@example.com",
             "custom_phone": "099111222",
             "custom_source": "WhatsApp",
-            "custom_territory": {"name": "Paysandú"},
+            "custom_territory": "Paysandú",
         }).insert(ignore_permissions=True)
 
         self.logger.info(f"✅ Contact created: {self.contact.name}")
