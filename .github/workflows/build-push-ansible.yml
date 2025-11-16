@@ -119,3 +119,23 @@ jobs:
       - name: Deploy docker-compose via Ansible
         run: |
           ansible-playbook -i ./ansible/inventory.ini ./ansible/docker_erpnext.yml -v
+
+  notify:
+    needs: ansible
+    runs-on: ubuntu-latest
+    if: ${{ success() }}  # Solo si TODO el workflow salió bien
+
+    steps:
+      - name: Send Slack notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+          SLACK_CHANNEL: erpnext
+          SLACK_USERNAME: "ERPNext Deploy Bot"
+          SLACK_ICON_EMOJI: ":rocket:"
+          SLACK_COLOR: "good"
+          SLACK_MESSAGE: |
+            :rocket: *Acuamania - Deploy exitoso en producción*
+            *Autor:* `${{ github.actor }}`
+
+            :sparkles: Hay una *nueva feature en producción* lista para ser usada.  
