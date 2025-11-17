@@ -2,8 +2,42 @@ import frappe
 import logging
 import sys
 import os
+import random
+import string
 from frappe.tests.utils import FrappeTestCase
 
+
+# ----------------------------------------------------------------------
+# CONSTANTS
+# ----------------------------------------------------------------------
+
+LOG_NAME = "test_normalize_contact_phone"
+LOG_FILENAME = "test_normalize_contact_phone.log"
+
+RANDOM_EMAIL_DOMAIN = "test.com"
+RANDOM_EMAIL_LENGTH = 5
+
+TEST_CONTACT_FIRST_NAME = "Alice"
+TEST_CONTACT_LAST_NAME = "Doe"
+TEST_CONTACT_PHONE = "099111222"
+
+TEST_LEAD_FIRST_NAME = "Test Lead"
+TEST_LEAD_PHONE = "088888888"
+
+
+# ----------------------------------------------------------------------
+# HELPERS
+# ----------------------------------------------------------------------
+
+def random_email():
+    """Return a randomized email using N lowercase letters."""
+    local = ''.join(random.choices(string.ascii_lowercase, k=RANDOM_EMAIL_LENGTH))
+    return f"{local}@{RANDOM_EMAIL_DOMAIN}"
+
+
+# ----------------------------------------------------------------------
+# TEST SUITE
+# ----------------------------------------------------------------------
 
 class TestNormalizeContactPhone(FrappeTestCase):
     """Validate that Contact.before_save normalizes phone and custom_phone in real workflows."""
@@ -11,30 +45,21 @@ class TestNormalizeContactPhone(FrappeTestCase):
     @classmethod
     def setUpClass(cls):
         """Initialize custom logger that logs to both stdout and file."""
-        # Ensure log directory exists
         site_name = frappe.local.site or frappe.get_site_path().split(os.sep)[-2]
         log_dir = frappe.get_site_path("logs")
         os.makedirs(log_dir, exist_ok=True)
 
-        log_path = os.path.join(log_dir, "test_normalize_contact_phone.log")
+        log_path = os.path.join(log_dir, LOG_FILENAME)
 
-        # Create logger
-        cls.logger = logging.getLogger("test_normalize_contact_phone")
+        cls.logger = logging.getLogger(LOG_NAME)
         cls.logger.setLevel(logging.INFO)
 
-        # Console handler (prints in bench run-tests output)
         console_handler = logging.StreamHandler(sys.stdout)
-        console_handler.setLevel(logging.INFO)
-        console_format = logging.Formatter("[%(levelname)s] %(message)s")
-        console_handler.setFormatter(console_format)
+        console_handler.setFormatter(logging.Formatter("[%(levelname)s] %(message)s"))
 
-        # File handler (saves into logs folder)
         file_handler = logging.FileHandler(log_path, mode="w", encoding="utf-8")
-        file_handler.setLevel(logging.INFO)
-        file_format = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
-        file_handler.setFormatter(file_format)
+        file_handler.setFormatter(logging.Formatter("%(asctime)s [%(levelname)s] %(message)s"))
 
-        # Attach both handlers
         cls.logger.addHandler(console_handler)
         cls.logger.addHandler(file_handler)
         cls.logger.propagate = False
@@ -50,21 +75,28 @@ class TestNormalizeContactPhone(FrappeTestCase):
         frappe.db.commit()
         self.logger.info("✅ Cleanup complete.")
 
+    # ------------------------------------------------------------------
+    # TEST 1: Contact manually created from UI
+    # ------------------------------------------------------------------
+
     def test_user_created_contact_from_ui(self):
         """Simulate user creating a Contact manually filling custom_phone."""
         self.logger.info("📱 Creating Contact manually (UI simulation)...")
 
         contact_data = {
             "doctype": "Contact",
-            "first_name": "Alice",
-            "last_name": "Doe",
-            "email_id": "alice@example.com",
-            "custom_phone": "099111222",
+            "first_name": TEST_CONTACT_FIRST_NAME,
+            "last_name": TEST_CONTACT_LAST_NAME,
+            "email_id": random_email(),               # <-- Random email
+            "custom_phone": TEST_CONTACT_PHONE,
         }
         self.logger.info(f"➡️ Contact payload: {contact_data}")
 
         contact = frappe.get_doc(contact_data).insert(ignore_permissions=True)
         self.logger.info(f"✅ Contact inserted: {contact.name}")
+
+        # Track created docs for cleanup
+        self._created_docs = getattr(self, "_created_docs", []) + [contact]
 
         contact.reload()
         self.logger.info(
@@ -73,10 +105,14 @@ class TestNormalizeContactPhone(FrappeTestCase):
 
         self.assertEqual(
             contact.phone,
-            "099111222",
+            TEST_CONTACT_PHONE,
             "Phone should be set from custom_phone when Contact is created manually."
         )
         self.logger.info("✅ Assertion passed: phone normalized correctly.")
+
+    # ------------------------------------------------------------------
+    # TEST 2: Contact auto-created from Lead
+    # ------------------------------------------------------------------
 
     def test_contact_created_from_lead(self):
         """Simulate ERPNext lead creation which auto-creates a Contact with phone but no custom_phone."""
@@ -84,20 +120,23 @@ class TestNormalizeContactPhone(FrappeTestCase):
 
         lead_data = {
             "doctype": "Lead",
-            "first_name": "Test Lead",
-            "email_id": "lead@example.com",
-            "phone": "088888888",
+            "first_name": TEST_LEAD_FIRST_NAME,
+            "email_id": random_email(),               # <-- Random email
+            "phone": TEST_LEAD_PHONE,
         }
+
         self.logger.info(f"➡️ Lead payload: {lead_data}")
 
         lead = frappe.get_doc(lead_data).insert(ignore_permissions=True)
         self.logger.info(f"✅ Lead inserted: {lead.name} (phone={lead.phone})")
 
+        self._created_docs = getattr(self, "_created_docs", []) + [lead]
+
         frappe.db.commit()
         self.logger.info("💾 DB committed after Lead insertion.")
 
-        contact_names = frappe.get_all("Contact", filters={"phone": "088888888"}, pluck="name")
-        self.logger.info(f"🔍 Contacts found by phone='088888888': {contact_names}")
+        contact_names = frappe.get_all("Contact", filters={"phone": TEST_LEAD_PHONE}, pluck="name")
+        self.logger.info(f"🔍 Contacts found by phone='{TEST_LEAD_PHONE}': {contact_names}")
 
         self.assertTrue(contact_names, "Contact should have been auto-created from Lead.")
 
@@ -108,7 +147,7 @@ class TestNormalizeContactPhone(FrappeTestCase):
 
         self.assertEqual(
             contact.custom_phone,
-            "088888888",
+            TEST_LEAD_PHONE,
             "Custom phone should be set from phone when Contact is created from Lead."
         )
         self.logger.info("✅ Assertion passed: custom_phone propagated correctly from phone.")

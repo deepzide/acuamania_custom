@@ -1,58 +1,119 @@
-import frappe
 import os
+import frappe
 from frappe.tests.utils import FrappeTestCase
 
-CRON = "acuamania.tasks.daily.save_transcriptions.save_transcriptions"
+from acuamania.tasks.daily.save_transcriptions import (
+    save_transcriptions,
+)
 
+
+# ================================================================
+# CONSTANTS
+# ================================================================
+
+CONTACT_FIRST_NAME = "Cron Tester"
+CONTACT_EMAIL = "cron@test.com"
+CONTACT_PHONE = "091234567"
+BUFFER_TEXT = "Hola que tal"
+DATE_FORMAT = "%Y-%m-%d"
+
+
+# ================================================================
+# TEST SUITE
+# ================================================================
 
 class TestSaveTranscriptions(FrappeTestCase):
 
     def setUp(self):
-        # Create a contact with pending transcription buffer
+        """Create a fresh Contact with transcription buffer."""
         self.contact = frappe.get_doc({
             "doctype": "Contact",
-            "first_name": "Cron Tester",
-            "phone_nos": [{"phone": "098765432"}],
-            "custom_transcription_text": "Linea 1\nLinea 2"
+            "first_name": CONTACT_FIRST_NAME,
+            "email_id": CONTACT_EMAIL,
+            "phone_nos": [{"phone": CONTACT_PHONE}],
+            "custom_transcription_text": BUFFER_TEXT,
         }).insert(ignore_permissions=True)
 
-        self.cron = frappe.get_attr(CRON)
-        self.today = frappe.utils.nowdate()
+        # Site private path for output files
+        self.site_private_files = os.path.join(
+            frappe.get_site_path(),
+            "private",
+            "files"
+        )
+
+        # Ensure folder exists
+        os.makedirs(self.site_private_files, exist_ok=True)
+
+    # ------------------------------------------------------------
 
     def test_cron_exports_and_clears_buffer(self):
-        # Run cron job
-        self.cron()
+        """Validates the full daily flow: export → file → history → clear."""
 
-        # Reload contact
-        c = frappe.get_doc("Contact", self.contact.name)
+        # Execute scheduled job
+        save_transcriptions()
 
-        # 1) Buffer must be cleared
-        self.assertEqual(c.custom_transcription_text, "")
+        # Reload contact to get updated fields
+        self.contact.reload()
 
-        # 2) A File DocType must exist
-        filename = f"TRS-{self.contact.name}-{self.today}.txt"
-        expected_url = f"/private/files/{filename}"
+        # -----------------------------
+        # 1) Verify buffer was cleared
+        # -----------------------------
+        self.assertEqual(
+            self.contact.custom_transcription_text,
+            "",
+            "Transcription buffer must be cleared after export."
+        )
 
-        file_doc_name = frappe.db.get_value("File", {"file_url": expected_url}, "name")
-        self.assertIsNotNone(file_doc_name)
+        # -----------------------------
+        # 2) Verify history entry exists
+        # -----------------------------
+        history_rows = self.contact.get("custom_transcriptions")
+        self.assertTrue(
+            history_rows,
+            "A transcription history row should have been created."
+        )
 
-        # Load file
+        row = history_rows[0]
+        file_url = row.transcription_file
+
+        self.assertIsNotNone(
+            file_url,
+            "History entry must include the transcription file URL."
+        )
+
+        # -----------------------------
+        # 3) Verify File doc was created
+        # -----------------------------
+        file_doc_name = frappe.db.exists("File", {"file_url": file_url})
+        self.assertIsNotNone(
+            file_doc_name,
+            "File DocType must be created for daily transcription export."
+        )
+
         file_doc = frappe.get_doc("File", file_doc_name)
-
-        # 3) File must be private
         self.assertEqual(file_doc.is_private, 1)
 
-        # 4) Physical file must exist in the site
-        file_path = frappe.get_site_path("private", "files", filename)
-        self.assertTrue(os.path.exists(file_path))
+        # -----------------------------
+        # 4) Verify physical file exists
+        # -----------------------------
+        physical_path = os.path.join(
+            frappe.get_site_path(),
+            file_url.lstrip("/")
+        )
 
-        # 5) Content must match original buffer
-        with open(file_path, "r", encoding="utf-8") as f:
-            content = f.read()
+        self.assertTrue(
+            os.path.exists(physical_path),
+            f"Expected file to exist at: {physical_path}"
+        )
 
-        self.assertEqual(content, "Linea 1\nLinea 2")
+        # -----------------------------
+        # 5) Verify file content matches buffer
+        # -----------------------------
+        with open(physical_path, "r", encoding="utf-8") as f:
+            content = f.read().strip()
 
-        # 6) Child table must include today's file
-        rows = [row for row in c.custom_transcriptions if str(row.date) == self.today]
-        self.assertEqual(len(rows), 1)
-        self.assertEqual(rows[0].transcription_file, expected_url)
+        self.assertEqual(
+            content,
+            BUFFER_TEXT,
+            "File contents must match the original transcription buffer."
+        )

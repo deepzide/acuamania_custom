@@ -1,20 +1,22 @@
-# Copyright (c) 2025, cegomezpy and contributors
-# For license information, please see license.txt
-
 import frappe
 from frappe.model.document import Document
 
 
 class ContactTranscriptionAPI(Document):
-	pass
+    pass
 
 
-@frappe.whitelist()
-def append_transcription(phone: str, message: str):
+@frappe.whitelist(methods=["POST"])
+def append_transcription():
     """
     Append a text snippet to Contact.custom_transcription_text.
-    This buffer will be consolidated daily by a scheduled job.
+    Parameters are taken from POST body (frappe.local.form_dict).
+    Authentication is required via API Key + Secret or user session.
     """
+
+    data = frappe.local.form_dict or {}
+    phone = data.get("phone")
+    message = data.get("message")
 
     validate_input(phone, message)
 

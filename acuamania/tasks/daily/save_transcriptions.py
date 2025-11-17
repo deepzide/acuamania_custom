@@ -1,3 +1,4 @@
+import os
 import frappe
 
 
@@ -47,7 +48,16 @@ def create_private_file(contact_name: str, date: str, content: str):
     """
     Creates a File DocType stored under:
     /private/files/TRS-<contact>-<date>.txt
+
+    Ensures the /private/files directory exists (important for tests).
     """
+
+    # --------------------------------------------------------------
+    # FIX: Ensure private files directory exists during test runs
+    # --------------------------------------------------------------
+    private_files_path = os.path.join(frappe.get_site_path(), "private", "files")
+    os.makedirs(private_files_path, exist_ok=True)
+
     filename = f"TRS-{contact_name}-{date}.txt"
     file_url = f"/private/files/{filename}"
 
@@ -59,15 +69,19 @@ def create_private_file(contact_name: str, date: str, content: str):
         "doctype": "File",
         "file_name": filename,
         "content": content,
-        "is_private": 1
+        "is_private": 1,
     })
+
     file_doc.insert(ignore_permissions=True)
 
     return file_doc
 
 
 def append_history(contact, file_doc, date):
-    """Append a row to Contact.custom_transcriptions."""
+    """
+    Append a row to Contact.custom_transcriptions.
+    Avoids creating duplicate entries for the same date.
+    """
     for row in contact.get("custom_transcriptions") or []:
         if str(row.date) == str(date):
             return
