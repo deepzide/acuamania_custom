@@ -15,7 +15,7 @@ on:
         required: true
 
 env:
-  SERVER_IP: 46.62.230.39
+  SERVER_IP: 164.90.145.68
 
 jobs:
   build:
