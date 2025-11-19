@@ -5,7 +5,7 @@
       "label": "Categoría del Cliente",
       "fieldtype": "Table MultiSelect",
       "options": "Customer__Customer_Category",
-      "insert_after": "customer_name"
+      "insert_after": "source"
     },
     {
       "fieldname": "custom_person_qty",
@@ -13,7 +13,7 @@
       "fieldtype": "Int",
       "reqd": 1,
       "default": 1,
-      "insert_after": "phone"
+      "insert_after": "custom_customer_category"
     },
     {
       "fieldname": "custom_has_hotel_voucher",
