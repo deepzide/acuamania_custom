@@ -8,7 +8,7 @@
       "insert_after": "customer_name"
     },
     {
-      "fieldname": "custom_qty_person",
+      "fieldname": "custom_person_qty",
       "label": "Cantidad de Personas",
       "fieldtype": "Int",
       "reqd": 1,
@@ -19,13 +19,7 @@
       "fieldname": "custom_has_hotel_voucher",
       "label": "Posee Voucher de Hotel",
       "fieldtype": "Check",
-      "insert_after": "custom_qty_person"
-    },
-    {
-      "fieldname": "custom_has_active_convenio",
-      "label": "Tiene Convenio Activo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
+      "insert_after": "custom_person_qty"
     },
     {
       "fieldname": "custom_contact_name",
@@ -38,7 +32,7 @@
       "fieldname": "is_corpo",
       "label": "Es Corporativo",
       "fieldtype": "Check",
-      "insert_after": "custom_has_active_convenio"
+      "insert_after": "custom_has_hotel_voucher"
     }
   ],
   "Contact": [
@@ -89,16 +83,10 @@
       "insert_after": "custom_customer_category"
     },
     {
-      "fieldname": "custom_has_active_convenio",
-      "label": "Tiene Convenio Activo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
-    },
-    {
       "fieldname": "is_corpo",
       "label": "Es Corporativo",
       "fieldtype": "Check",
-      "insert_after": "custom_has_active_convenio"
+      "insert_after": "custom_has_hotel_voucher"
     },
     {
       "fieldname": "custom_transcription_text",
@@ -130,16 +118,10 @@
       "insert_after": "custom_customer_category"
     },
     {
-      "fieldname": "custom_has_active_convenio",
-      "label": "Tiene Convenio Activo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
-    },
-    {
       "fieldname": "is_corpo",
       "label": "Es Corporativo",
       "fieldtype": "Check",
-      "insert_after": "custom_has_active_convenio"
+      "insert_after": "custom_has_hotel_voucher"
     }
   ]
 }

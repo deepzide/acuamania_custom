@@ -30,9 +30,9 @@ class TestLeadClassificationFlow(FrappeTestCase):
             "doctype": "Lead",
             "first_name": "First Lead",
             "phone": self.phone_number,
-            "custom_qty_person": 3,
+            "custom_person_qty": 3,
             "custom_has_hotel_voucher": 1,
-            "custom_has_active_convenio": 0
+            "is_corpo": 0
         }).insert(ignore_permissions=True)
 
         frappe.db.commit()
@@ -49,9 +49,9 @@ class TestLeadClassificationFlow(FrappeTestCase):
             "doctype": "Lead",
             "first_name": "First Lead",
             "phone": self.phone_number,
-            "custom_qty_person": 2,
+            "custom_person_qty": 2,
             "custom_has_hotel_voucher": 1,
-            "custom_has_active_convenio": 1
+            "is_corpo": 1
         }).insert(ignore_permissions=True)
 
         frappe.db.commit()

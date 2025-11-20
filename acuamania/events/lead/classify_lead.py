@@ -23,11 +23,10 @@ def classify_lead(doc):
 def _resolve_additional(doc):
     """Return additional classifications based on custom fields."""
     results = set()
-    if getattr(doc, "custom_qty_person", 1) > 1:
+    if getattr(doc, "custom_person_qty", 1) > 1:
         results.add(GROUP_CATEGORY)
-    if getattr(doc, "custom_has_active_convenio", 0):
+    if getattr(doc, "is_corpo", 0):
         results.add(CORPORATE_CATEGORY)
-        doc.is_corpo = 1
     if getattr(doc, "custom_has_hotel_voucher", 0):
         results.add(HOTEL_CATEGORY)
     return results
