@@ -5,13 +5,13 @@
 [post_model_sync]
 # Patches added in this section will be executed after doctypes are migrated
 # Configuration patches
-acuamania.patches.disable_auto_contact_creation 6.0
-acuamania.patches.hide_lead_mobile_no 8.0
+acuamania.patches.disable_auto_contact_creation 43
+acuamania.patches.hide_lead_mobile_no 56
 
 # Load nomenclators patches
-acuamania.patches.load_lead_sources 9.0
-acuamania.patches.load_customer_categories 10.0
-acuamania.patches.load_territories 11.0
+acuamania.patches.load_lead_sources 76
+acuamania.patches.load_customer_categories 25
+acuamania.patches.load_territories 63
 
 # Add custom fields to core doctypes patches
-acuamania.patches.add_custom_fields 12.0
+acuamania.patches.add_custom_fields 98
