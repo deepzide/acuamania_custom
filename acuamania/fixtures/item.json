@@ -1,0 +1,93 @@
+[
+  {
+    "doctype": "Item",
+    "name": "ENTR-GRAL",
+    "item_code": "ENTR-GRAL",
+    "item_name": "Entrada General",
+    "item_group": "Entrada",
+    "is_stock_item": 0,
+    "stock_uom": "Unit",
+    "standard_rate": 910,
+    "is_sales_item": 1,
+    "is_service_item": 1,
+    "default_price_list": "Tarifas Público"
+  },
+  {
+    "doctype": "Item",
+    "name": "ENTR-NINO",
+    "item_code": "ENTR-NINO",
+    "item_name": "Entrada Niño",
+    "item_group": "Entrada",
+    "is_stock_item": 0,
+    "stock_uom": "Unit",
+    "standard_rate": 660,
+    "is_sales_item": 1,
+    "is_service_item": 1,
+    "default_price_list": "Tarifas Público"
+  },
+  {
+    "doctype": "Item",
+    "name": "ENTR-RES",
+    "item_code": "ENTR-RES",
+    "item_name": "Entrada Residente",
+    "item_group": "Entrada",
+    "is_stock_item": 0,
+    "stock_uom": "Unit",
+    "standard_rate": 610,
+    "is_sales_item": 1,
+    "is_service_item": 1,
+    "default_price_list": "Tarifas Público"
+  },
+  {
+    "doctype": "Item",
+    "name": "ACUAP-NINO",
+    "item_code": "ACUAP-NINO",
+    "item_name": "Acuapase Niño",
+    "item_group": "Entrada",
+    "is_stock_item": 0,
+    "stock_uom": "Unit",
+    "standard_rate": 1320,
+    "is_sales_item": 1,
+    "is_service_item": 1,
+    "default_price_list": "Tarifas Público"
+  },
+  {
+    "doctype": "Item",
+    "name": "ACUAP-ADULTO",
+    "item_code": "ACUAP-ADULTO",
+    "item_name": "Acuapase Adulto",
+    "item_group": "Entrada",
+    "is_stock_item": 0,
+    "stock_uom": "Unit",
+    "standard_rate": 1820,
+    "is_sales_item": 1,
+    "is_service_item": 1,
+    "default_price_list": "Tarifas Público"
+  },
+  {
+    "doctype": "Item",
+    "name": "GRUPO-GRAL",
+    "item_code": "GRUPO-GRAL",
+    "item_name": "Entrada Grupo General",
+    "item_group": "Entrada",
+    "is_stock_item": 0,
+    "stock_uom": "Unit",
+    "standard_rate": 730,
+    "is_sales_item": 1,
+    "is_service_item": 1,
+    "default_price_list": "Tarifas Público"
+  },
+  {
+    "doctype": "Item",
+    "name": "GRUPO-RES",
+    "item_code": "GRUPO-RES",
+    "item_name": "Entrada Grupo Residente",
+    "item_group": "Entrada",
+    "is_stock_item": 0,
+    "stock_uom": "Unit",
+    "standard_rate": 540,
+    "is_sales_item": 1,
+    "is_service_item": 1,
+    "default_price_list": "Tarifas Público"
+  }
+]

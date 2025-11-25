@@ -1,0 +1,132 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-22 12:25:33.418342",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "promotion_name",
+  "active",
+  "only_even_quantities",
+  "apply_type",
+  "apply_on_age_group",
+  "apply_to_item_group",
+  "min_qty_required",
+  "column_break_uvis",
+  "valid_from",
+  "valid_upto",
+  "fixed_price",
+  "porcentaje_de_descuento",
+  "discount_amount",
+  "section_break_qzik",
+  "park_promotion_items"
+ ],
+ "fields": [
+  {
+   "fieldname": "promotion_name",
+   "fieldtype": "Data",
+   "label": "Nombre de la Promo"
+  },
+  {
+   "default": "0",
+   "fieldname": "active",
+   "fieldtype": "Check",
+   "label": "Activo"
+  },
+  {
+   "fieldname": "valid_from",
+   "fieldtype": "Datetime",
+   "label": "V\u00e1lido Desde"
+  },
+  {
+   "fieldname": "valid_upto",
+   "fieldtype": "Datetime",
+   "label": "V\u00e1lido Hasta"
+  },
+  {
+   "fieldname": "apply_type",
+   "fieldtype": "Select",
+   "label": "Tipo de Promo",
+   "options": "\n2x1\n3x2\npercentage\ndiscount_amount\nfixed_price"
+  },
+  {
+   "fieldname": "apply_on_age_group",
+   "fieldtype": "Select",
+   "label": "Aplicar en Grupo de Edad",
+   "options": "\nNi\u00f1o\nAdulto\nAmbos"
+  },
+  {
+   "fieldname": "apply_to_item_group",
+   "fieldtype": "Link",
+   "label": "Aplicar a Grupo de Items",
+   "options": "Item Group"
+  },
+  {
+   "fieldname": "min_qty_required",
+   "fieldtype": "Int",
+   "label": "Cantidad M\u00ednima Requerida"
+  },
+  {
+   "default": "0",
+   "fieldname": "only_even_quantities",
+   "fieldtype": "Check",
+   "label": "Solo a cantidades pares"
+  },
+  {
+   "fieldname": "fixed_price",
+   "fieldtype": "Currency",
+   "label": "Precio Fijo"
+  },
+  {
+   "fieldname": "porcentaje_de_descuento",
+   "fieldtype": "Float",
+   "label": "Porcentaje de Descuento"
+  },
+  {
+   "fieldname": "discount_amount",
+   "fieldtype": "Currency",
+   "label": "Precio del Descuento"
+  },
+  {
+   "fieldname": "column_break_uvis",
+   "fieldtype": "Column Break"
+  },
+  {
+   "fieldname": "section_break_qzik",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "park_promotion_items",
+   "fieldtype": "Table",
+   "label": "Productos",
+   "options": "Park Promotion Item"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-22 12:52:57.034221",
+ "modified_by": "Administrator",
+ "module": "Acuamania",
+ "name": "Park Promotion",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

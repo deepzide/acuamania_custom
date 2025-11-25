@@ -5,6 +5,13 @@ app_description = "Acuamania App"
 app_email = "cegomezpy@gmail.com"
 app_license = "unlicense"
 
+
+fixtures = [
+    # {"dt": "Item"},
+    {"dt": "Park Promotion"}
+]
+
+
 # Apps
 # ------------------
 
