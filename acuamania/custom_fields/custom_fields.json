@@ -132,14 +132,6 @@
       "insert_after": "custom_has_hotel_voucher"
     }
   ],
-  "Pricing Rules": [
-    {
-      "fieldname": "custom_exclude_groups",
-      "label": "Excluir Grupos",
-      "fieldtype": "Check",
-      "insert_after": "valid_upto"
-    }
-  ],
   "Item": [
     {
       "fieldname": "custom_age_group",
