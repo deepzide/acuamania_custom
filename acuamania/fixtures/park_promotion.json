@@ -1,0 +1,126 @@
+[
+  {
+    "doctype": "Park Promotion",
+    "name": "PROMO-REENC-RESIDENTES",
+    "promotion_name": "Reencuentro - Todos Somos Residentes",
+    "active": 1,
+    "valid_from": "2025-12-18",
+    "valid_upto": "2025-12-30",
+    "apply_type": "fixed_price",
+    "apply_on_age_group": "both",
+    "min_qty_required": 1,
+    "only_even_quantities": 0,
+    "fixed_price": 610,
+    "discount_percentage": null,
+    "discount_amount": null,
+    "apply_to_item_group": "",
+    "items": [
+      {
+        "doctype": "Park Promotion Item",
+        "parentfield": "items",
+        "item_code": "ENTR-GRAL",
+        "required_age_group": "none"
+      }
+    ]
+  },
+
+  {
+    "doctype": "Park Promotion",
+    "name": "PROMO-ONFI-2X1",
+    "promotion_name": "ONFI 2x1",
+    "active": 1,
+    "valid_from": "2025-12-01",
+    "valid_upto": "2025-12-30",
+    "apply_type": "2x1",
+    "apply_on_age_group": "both",
+    "min_qty_required": 2,
+    "only_even_quantities": 0,
+    "fixed_price": null,
+    "discount_percentage": null,
+    "discount_amount": null,
+    "apply_to_item_group": "",
+    "items": [
+      {
+        "doctype": "Park Promotion Item",
+        "parentfield": "items",
+        "item_code": "ENTR-GRAL",
+        "required_age_group": "none"
+      }
+    ]
+  },
+
+  {
+    "doctype": "Park Promotion",
+    "name": "PROMO-COU-2X1",
+    "promotion_name": "COU 2x1",
+    "active": 1,
+    "valid_from": "2025-12-01",
+    "valid_upto": "2025-12-30",
+    "apply_type": "2x1",
+    "apply_on_age_group": "both",
+    "min_qty_required": 2,
+    "only_even_quantities": 0,
+    "fixed_price": null,
+    "discount_percentage": null,
+    "discount_amount": null,
+    "apply_to_item_group": "",
+    "items": [
+      {
+        "doctype": "Park Promotion Item",
+        "parentfield": "items",
+        "item_code": "ENTR-GRAL",
+        "required_age_group": "none"
+      }
+    ]
+  },
+
+  {
+    "doctype": "Park Promotion",
+    "name": "PROMO-REYES-NINOS",
+    "promotion_name": "Promo Reyes - 2x1 Niños",
+    "active": 1,
+    "valid_from": "2025-01-06",
+    "valid_upto": "2025-01-06",
+    "apply_type": "2x1",
+    "apply_on_age_group": "children",
+    "min_qty_required": 2,
+    "only_even_quantities": 0,
+    "fixed_price": null,
+    "discount_percentage": null,
+    "discount_amount": null,
+    "apply_to_item_group": "",
+    "items": [
+      {
+        "doctype": "Park Promotion Item",
+        "parentfield": "items",
+        "item_code": "ENTR-NINO",
+        "required_age_group": "children"
+      }
+    ]
+  },
+
+  {
+    "doctype": "Park Promotion",
+    "name": "PROMO-MUJER-2X1",
+    "promotion_name": "Día de la Mujer - 2x1",
+    "active": 1,
+    "valid_from": "2025-03-08",
+    "valid_upto": "2025-03-08",
+    "apply_type": "2x1",
+    "apply_on_age_group": "adults",
+    "min_qty_required": 2,
+    "only_even_quantities": 0,
+    "fixed_price": null,
+    "discount_percentage": null,
+    "discount_amount": null,
+    "apply_to_item_group": "",
+    "items": [
+      {
+        "doctype": "Park Promotion Item",
+        "parentfield": "items",
+        "item_code": "ENTR-GRAL",
+        "required_age_group": "adults"
+      }
+    ]
+  }
+]

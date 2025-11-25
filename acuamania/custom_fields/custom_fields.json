@@ -103,6 +103,14 @@
       "insert_after": "contact_email"
     }
   ],
+  "Quotation": [
+    {
+      "fieldname": "custom_promotion_name",
+      "label": "Promoción",
+      "fieldtype": "Data",
+      "insert_after": "contact_email"
+    }
+  ],
   "Customer": [
     {
       "fieldname": "custom_customer_category",
@@ -122,6 +130,23 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
+    }
+  ],
+  "Pricing Rules": [
+    {
+      "fieldname": "custom_exclude_groups",
+      "label": "Excluir Grupos",
+      "fieldtype": "Check",
+      "insert_after": "valid_upto"
+    }
+  ],
+  "Item": [
+    {
+      "fieldname": "custom_age_group",
+      "label": "Grupo Etario",
+      "fieldtype": "Select",
+      "options": "children\nadults\nboth",
+      "insert_after": "item_group"
     }
   ]
 }
