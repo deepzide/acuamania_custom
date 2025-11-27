@@ -1,6 +1,6 @@
 import frappe
 from frappe.utils import today
-from .rules import (
+from acuamania.acuamania.promo_engine.rules import (
     apply_two_for_one,
     apply_three_for_two,
     apply_fixed_price,
