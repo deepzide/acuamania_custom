@@ -107,8 +107,9 @@
     {
       "fieldname": "custom_promotion_name",
       "label": "Promoción",
-      "fieldtype": "Data",
-      "insert_after": "contact_email"
+      "fieldtype": "Link",
+      "options": "Park Promotion",
+      "insert_after": "apply_discount_on"
     }
   ],
   "Customer": [

@@ -78,7 +78,7 @@
    "label": "Precio Fijo"
   },
   {
-   "fieldname": "porcentaje_de_descuento",
+   "fieldname": "discount_percentage",
    "fieldtype": "Float",
    "label": "Porcentaje de Descuento"
   },

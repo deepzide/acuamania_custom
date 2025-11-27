@@ -122,5 +122,55 @@
         "required_age_group": "adults"
       }
     ]
+  },
+
+  {
+    "doctype": "Park Promotion",
+    "name": "PROMO-PCT-10",
+    "promotion_name": "Descuento 10%",
+    "active": 1,
+    "valid_from": "2025-01-01",
+    "valid_upto": "2025-12-31",
+    "apply_type": "percentage",
+    "apply_on_age_group": "both",
+    "min_qty_required": 1,
+    "only_even_quantities": 0,
+    "fixed_price": null,
+    "discount_percentage": 10,
+    "discount_amount": null,
+    "apply_to_item_group": "",
+    "items": [
+      {
+        "doctype": "Park Promotion Item",
+        "parentfield": "items",
+        "item_code": "ENTR-GRAL",
+        "required_age_group": "none"
+      }
+    ]
+  },
+
+  {
+    "doctype": "Park Promotion",
+    "name": "PROMO-FLAT-500",
+    "promotion_name": "Descuento Fijo 500 UYU",
+    "active": 1,
+    "valid_from": "2025-01-01",
+    "valid_upto": "2025-12-31",
+    "apply_type": "discount_amount",
+    "apply_on_age_group": "both",
+    "min_qty_required": 1,
+    "only_even_quantities": 0,
+    "fixed_price": null,
+    "discount_percentage": null,
+    "discount_amount": 500,
+    "apply_to_item_group": "",
+    "items": [
+      {
+        "doctype": "Park Promotion Item",
+        "parentfield": "items",
+        "item_code": "ENTR-GRAL",
+        "required_age_group": "none"
+      }
+    ]
   }
 ]
