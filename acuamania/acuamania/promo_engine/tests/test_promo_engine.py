@@ -1,110 +1,165 @@
 import frappe
+from frappe.utils import today
 from frappe.tests.utils import FrappeTestCase
 
 
 def create_test_customer():
-    """Create a minimal customer for use in promo tests."""
-    print("🔧 Creating test customer")
-
     customer = frappe.new_doc("Customer")
     customer.customer_name = "Test Promo Customer"
     customer.customer_group = "All Customer Groups"
     customer.save(ignore_permissions=True)
-
-    print(f"✅ Customer created: {customer.name}")
     return customer.name
 
 
-def create_quotation_with_item(item_code, qty, rate=None):
-    """Create a new (not yet inserted) Quotation with a single item."""
+def create_document_with_item(doctype, item_code, qty, rate=None):
     customer_name = create_test_customer()
 
-    print(f"🧾 Creating quotation draft: item={item_code}, qty={qty}, rate={rate}")
+    doc = frappe.new_doc(doctype)
+    doc.customer = customer_name
 
-    quotation = frappe.new_doc("Quotation")
-    quotation.customer = customer_name
+    # Sales Order requires delivery_date
+    if doctype == "Sales Order":
+        doc.delivery_date = today()
+        # schedule_date is sometimes required depending on settings
+        doc.transaction_date = today()
 
-    item = quotation.append("items", {})
+    item = doc.append("items", {})
     item.item_code = item_code
     item.qty = qty
     if rate is not None:
         item.rate = rate
 
-    return quotation
+    # Sales Order items require schedule_date as well
+    if doctype == "Sales Order":
+        item.delivery_date = doc.delivery_date
+        item.schedule_date = doc.delivery_date
+
+    return doc
 
 
 class TestPromoEngine(FrappeTestCase):
-    """
-    Tests for the Acuamania Promotion Engine.
 
-    These tests rely on the hook:
-        Quotation.before_save → apply_selected_promotion
-    """
+    def run_promo_test(self, doctype, promo_name, qty, rate, expected):
+        print(f"▶️ Running promo test for {doctype} using promo '{promo_name}'")
+
+        doc = create_document_with_item(doctype, "ENTR-GRAL", qty=qty, rate=rate)
+        doc.custom_promotion_name = promo_name
+
+        doc.save()
+
+        print(f"🔍 discount={doc.discount_amount}, expected={expected}")
+        self.assertEqual(doc.discount_amount, expected)
+
+        return doc.discount_amount
+
+    # -------------------------------
+    # QUOTATION TESTS (using promotion_name)
+    # -------------------------------
 
     def test_two_for_one_even(self):
-        print("▶️ test_two_for_one_even starting")
-
-        quotation = create_quotation_with_item("ENTR-GRAL", qty=4, rate=910)
-        quotation.custom_promotion_name = "PROMO-ONFI-2X1"
-
-        quotation.save()
-
-        print(f"🔍 discount={quotation.discount_amount}")
-        self.assertEqual(quotation.discount_amount, 1820)
+        self.run_promo_test(
+            "Quotation",
+            "ONFI 2x1",
+            qty=4,
+            rate=910,
+            expected=1820
+        )
 
     def test_two_for_one_odd(self):
-        print("▶️ test_two_for_one_odd starting")
-
-        quotation = create_quotation_with_item("ENTR-GRAL", qty=3, rate=910)
-        quotation.custom_promotion_name = "PROMO-ONFI-2X1"
-
-        quotation.save()
-
-        print(f"🔍 discount={quotation.discount_amount}")
-        self.assertEqual(quotation.discount_amount, 910)
+        self.run_promo_test(
+            "Quotation",
+            "ONFI 2x1",
+            qty=3,
+            rate=910,
+            expected=910
+        )
 
     def test_fixed_price(self):
-        print("▶️ test_fixed_price starting")
-
-        quotation = create_quotation_with_item("ENTR-GRAL", qty=2, rate=910)
-        quotation.custom_promotion_name = "PROMO-REENC-RESIDENTES"
-
-        quotation.save()
-
         expected = (910 - 610) * 2
-        print(f"🔍 discount={quotation.discount_amount}, expected={expected}")
-
-        self.assertEqual(quotation.discount_amount, expected)
+        self.run_promo_test(
+            "Quotation",
+            "Reencuentro - Todos Somos Residentes",
+            qty=2,
+            rate=910,
+            expected=expected
+        )
 
     def test_percentage_discount(self):
-        print("▶️ test_percentage_discount starting")
-
-        quotation = create_quotation_with_item("ENTR-GRAL", qty=2, rate=1000)
-        quotation.custom_promotion_name = "PROMO-PCT-10"
-
-        quotation.save()
-
-        print(f"🔍 discount={quotation.discount_amount}")
-        self.assertEqual(quotation.discount_amount, 200)
+        self.run_promo_test(
+            "Quotation",
+            "Descuento 10%",
+            qty=2,
+            rate=1000,
+            expected=200
+        )
 
     def test_discount_amount(self):
-        print("▶️ test_discount_amount starting")
-
-        quotation = create_quotation_with_item("ENTR-GRAL", qty=2, rate=900)
-        quotation.custom_promotion_name = "PROMO-FLAT-500"
-
-        quotation.save()
-
-        print(f"🔍 discount={quotation.discount_amount}")
-        self.assertEqual(quotation.discount_amount, 500)
+        self.run_promo_test(
+            "Quotation",
+            "Descuento Fijo 500 UYU",
+            qty=2,
+            rate=900,
+            expected=500
+        )
 
     def test_no_promotion_selected(self):
-        print("▶️ test_no_promotion_selected starting")
+        doc = create_document_with_item("Quotation", "ENTR-GRAL", qty=2, rate=900)
+        doc.discount_amount = 123
+        doc.save()
+        self.assertEqual(doc.discount_amount, 123)
 
-        quotation = create_quotation_with_item("ENTR-GRAL", qty=2, rate=900)
-        quotation.discount_amount = 123  # simulate existing discount
+    # -------------------------------
+    # SALES ORDER TESTS (same logic)
+    # -------------------------------
 
-        quotation.save()
+    def test_so_two_for_one_even(self):
+        self.run_promo_test(
+            "Sales Order",
+            "ONFI 2x1",
+            qty=4,
+            rate=910,
+            expected=1820
+        )
 
-        print(f"🔍 discount after save={quotation.discount_amount}")
-        self.assertEqual(quotation.discount_amount, 123)
+    def test_so_two_for_one_odd(self):
+        self.run_promo_test(
+            "Sales Order",
+            "ONFI 2x1",
+            qty=3,
+            rate=910,
+            expected=910
+        )
+
+    def test_so_fixed_price(self):
+        expected = (910 - 610) * 2
+        self.run_promo_test(
+            "Sales Order",
+            "Reencuentro - Todos Somos Residentes",
+            qty=2,
+            rate=910,
+            expected=expected
+        )
+
+    def test_so_percentage_discount(self):
+        self.run_promo_test(
+            "Sales Order",
+            "Descuento 10%",
+            qty=2,
+            rate=1000,
+            expected=200
+        )
+
+    def test_so_discount_amount(self):
+        self.run_promo_test(
+            "Sales Order",
+            "Descuento Fijo 500 UYU",
+            qty=2,
+            rate=900,
+            expected=500
+        )
+
+    def test_so_no_promotion_selected(self):
+        doc = create_document_with_item("Sales Order", "ENTR-GRAL", qty=2, rate=900)
+        doc.discount_amount = 123
+        doc.save()
+        self.assertEqual(doc.discount_amount, 123)
