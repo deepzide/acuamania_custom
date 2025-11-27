@@ -158,6 +158,9 @@ doc_events = {
     "Sales Order": {
         "before_save": "acuamania.events.sales_order.before_save.before_save",
     },
+    "Quotation": {
+        "before_save": "acuamania.events.quotation.before_save.before_save",
+    },
 }
 
 
