@@ -95,14 +95,6 @@
       "insert_after": "image"
     }
   ],
-  "Sales Order": [
-    {
-      "fieldname": "custom_email",
-      "label": "Correo Electrónico Custom",
-      "fieldtype": "Data",
-      "insert_after": "contact_email"
-    }
-  ],
   "Quotation": [
     {
       "fieldname": "custom_promotion_name",
@@ -110,6 +102,35 @@
       "fieldtype": "Link",
       "options": "Park Promotion",
       "insert_after": "apply_discount_on"
+    },
+    {
+      "fieldname": "custom_selected_promotion",
+      "label": "Promoción Seleccionada",
+      "fieldtype": "Data",
+      "insert_after": "custom_promotion_name",
+      "read_only": 1
+    }
+  ],
+  "Sales Order": [
+    {
+      "fieldname": "custom_email",
+      "label": "Correo Electrónico Custom",
+      "fieldtype": "Data",
+      "insert_after": "contact_email"
+    },
+        {
+      "fieldname": "custom_promotion_name",
+      "label": "Promoción",
+      "fieldtype": "Link",
+      "options": "Park Promotion",
+      "insert_after": "apply_discount_on"
+    },
+    {
+      "fieldname": "custom_selected_promotion",
+      "label": "Promoción Seleccionada",
+      "fieldtype": "Data",
+      "insert_after": "custom_promotion_name",
+      "read_only": 1
     }
   ],
   "Customer": [

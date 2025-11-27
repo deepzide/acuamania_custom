@@ -45,9 +45,9 @@ class TestPromoEngine(FrappeTestCase):
         print("▶️ test_two_for_one_even starting")
 
         quotation = create_quotation_with_item("ENTR-GRAL", qty=4, rate=910)
-        quotation.custom_selected_promotion = "PROMO-ONFI-2X1"
+        quotation.custom_promotion_name = "PROMO-ONFI-2X1"
 
-        quotation.insert()
+        quotation.save()
 
         print(f"🔍 discount={quotation.discount_amount}")
         self.assertEqual(quotation.discount_amount, 1820)
@@ -56,9 +56,9 @@ class TestPromoEngine(FrappeTestCase):
         print("▶️ test_two_for_one_odd starting")
 
         quotation = create_quotation_with_item("ENTR-GRAL", qty=3, rate=910)
-        quotation.custom_selected_promotion = "PROMO-ONFI-2X1"
+        quotation.custom_promotion_name = "PROMO-ONFI-2X1"
 
-        quotation.insert()
+        quotation.save()
 
         print(f"🔍 discount={quotation.discount_amount}")
         self.assertEqual(quotation.discount_amount, 910)
@@ -67,9 +67,9 @@ class TestPromoEngine(FrappeTestCase):
         print("▶️ test_fixed_price starting")
 
         quotation = create_quotation_with_item("ENTR-GRAL", qty=2, rate=910)
-        quotation.custom_selected_promotion = "PROMO-REENC-RESIDENTES"
+        quotation.custom_promotion_name = "PROMO-REENC-RESIDENTES"
 
-        quotation.insert()
+        quotation.save()
 
         expected = (910 - 610) * 2
         print(f"🔍 discount={quotation.discount_amount}, expected={expected}")
@@ -80,9 +80,9 @@ class TestPromoEngine(FrappeTestCase):
         print("▶️ test_percentage_discount starting")
 
         quotation = create_quotation_with_item("ENTR-GRAL", qty=2, rate=1000)
-        quotation.custom_selected_promotion = "PROMO-PCT-10"
+        quotation.custom_promotion_name = "PROMO-PCT-10"
 
-        quotation.insert()
+        quotation.save()
 
         print(f"🔍 discount={quotation.discount_amount}")
         self.assertEqual(quotation.discount_amount, 200)
@@ -91,9 +91,9 @@ class TestPromoEngine(FrappeTestCase):
         print("▶️ test_discount_amount starting")
 
         quotation = create_quotation_with_item("ENTR-GRAL", qty=2, rate=900)
-        quotation.custom_selected_promotion = "PROMO-FLAT-500"
+        quotation.custom_promotion_name = "PROMO-FLAT-500"
 
-        quotation.insert()
+        quotation.save()
 
         print(f"🔍 discount={quotation.discount_amount}")
         self.assertEqual(quotation.discount_amount, 500)
@@ -104,7 +104,7 @@ class TestPromoEngine(FrappeTestCase):
         quotation = create_quotation_with_item("ENTR-GRAL", qty=2, rate=900)
         quotation.discount_amount = 123  # simulate existing discount
 
-        quotation.insert()
+        quotation.save()
 
-        print(f"🔍 discount after insert={quotation.discount_amount}")
+        print(f"🔍 discount after save={quotation.discount_amount}")
         self.assertEqual(quotation.discount_amount, 123)

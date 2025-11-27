@@ -8,7 +8,7 @@ def resolve_applicable_item_codes(promo, items_by_code):
     - Si no, se aplica a todos los item_code del documento.
     """
     explicit_codes = {
-        row.item_code
+        row.product
         for row in getattr(promo, "park_promotion_items", []) or []
         if getattr(row, "product", None)
     }
