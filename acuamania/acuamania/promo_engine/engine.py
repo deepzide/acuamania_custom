@@ -141,15 +141,25 @@ def get_applicable_promotions(doc):
 
 def apply_document_discount(doc, discount_amount):
     """
-    Aplica descuento a nivel Grand Total.
+    Aplica descuento a nivel Grand Total y fuerza recalculación para que ERPNext
+    no sobreescriba el valor en el primer save.
     """
-    frappe.msgprint(f"🔵 DEBUG: apply_document_discount() con discount_amount={discount_amount}")
 
     doc.apply_discount_on = "Grand Total"
     doc.additional_discount_percentage = 0
     doc.discount_amount = discount_amount
 
-    frappe.msgprint("🟢 DEBUG: Descuento aplicado en doc.discount_amount")
+    # 🚀 Force ERPNext to recalculate totals NOW
+    try:
+        doc.run_method("apply_discount")
+    except Exception:
+        pass
+
+    try:
+        doc.run_method("calculate_taxes_and_totals")
+    except Exception:
+        pass
+
 
 
 def set_promotion_annotation(doc, promo):
