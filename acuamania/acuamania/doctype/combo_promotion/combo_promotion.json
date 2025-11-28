@@ -1,0 +1,69 @@
+{
+ "actions": [],
+ "allow_rename": 1,
+ "creation": "2025-11-28 01:34:16.804881",
+ "doctype": "DocType",
+ "engine": "InnoDB",
+ "field_order": [
+  "required",
+  "column_break_hivp",
+  "free",
+  "section_break_zbwa",
+  "combos_promotion_items"
+ ],
+ "fields": [
+  {
+   "fieldname": "column_break_hivp",
+   "fieldtype": "Column Break"
+  },
+  {
+   "description": "Cantidad requerida para que se apliquen items gratuitos",
+   "fieldname": "required",
+   "fieldtype": "Int",
+   "label": "Requeridos"
+  },
+  {
+   "description": "Cantidad de items gratuitos dada la cantidad requerida",
+   "fieldname": "free",
+   "fieldtype": "Int",
+   "label": "Gratuitos"
+  },
+  {
+   "fieldname": "section_break_zbwa",
+   "fieldtype": "Section Break"
+  },
+  {
+   "fieldname": "combos_promotion_items",
+   "fieldtype": "Table",
+   "label": "Combos elegibles",
+   "options": "Combo Promotion Item"
+  }
+ ],
+ "grid_page_length": 50,
+ "index_web_pages_for_search": 1,
+ "links": [],
+ "modified": "2025-11-28 02:19:49.757253",
+ "modified_by": "Administrator",
+ "module": "Acuamania",
+ "name": "Combo Promotion",
+ "owner": "Administrator",
+ "permissions": [
+  {
+   "create": 1,
+   "delete": 1,
+   "email": 1,
+   "export": 1,
+   "print": 1,
+   "read": 1,
+   "report": 1,
+   "role": "System Manager",
+   "share": 1,
+   "write": 1
+  }
+ ],
+ "row_format": "Dynamic",
+ "rows_threshold_for_grid_search": 20,
+ "sort_field": "modified",
+ "sort_order": "DESC",
+ "states": []
+}

@@ -1,8 +1,7 @@
 import frappe
 from frappe.utils import today
 from acuamania.acuamania.promo_engine.rules import (
-    apply_two_for_one,
-    apply_three_for_two,
+    apply_required_x_free,
     apply_fixed_price,
     apply_percentage_discount,
     apply_discount_amount,
@@ -86,30 +85,23 @@ def group_items_by_code(doc):
 
 
 def dispatch_promotion_logic(promo, items_by_code):
-    """
-    Enrutador hacia la función correspondiente.
-    """
     frappe.msgprint(f"🔵 DEBUG: Entrando a dispatch_promotion_logic() con tipo={promo.apply_type}")
 
     promo_type = promo.apply_type
 
-    if promo_type == "2x1":
-        frappe.msgprint("🟣 DEBUG: Ejecutando regla 2x1")
-        return apply_two_for_one(promo, items_by_code)
+    if promo_type == "requeridos x gratuitos":
+        frappe.msgprint("🟣 DEBUG: Ejecutando regla requeridos_x_gratuitos")
+        return apply_required_x_free(promo, items_by_code)
 
-    if promo_type == "3x2":
-        frappe.msgprint("🟣 DEBUG: Ejecutando regla 3x2")
-        return apply_three_for_two(promo, items_by_code)
-
-    if promo_type == "fixed_price":
+    if promo_type == "precio fijo":
         frappe.msgprint("🟣 DEBUG: Ejecutando regla fixed_price")
         return apply_fixed_price(promo, items_by_code)
 
-    if promo_type == "percentage":
+    if promo_type == "porcentaje":
         frappe.msgprint("🟣 DEBUG: Ejecutando regla percentage")
         return apply_percentage_discount(promo, items_by_code)
 
-    if promo_type == "discount_amount":
+    if promo_type == "precio de descuento":
         frappe.msgprint("🟣 DEBUG: Ejecutando regla discount_amount")
         return apply_discount_amount(promo, items_by_code)
 
