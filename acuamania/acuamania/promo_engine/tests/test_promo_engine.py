@@ -20,7 +20,6 @@ def create_document_with_item(doctype, item_code, qty, rate=None):
     # Sales Order requires delivery_date
     if doctype == "Sales Order":
         doc.delivery_date = today()
-        # schedule_date is sometimes required depending on settings
         doc.transaction_date = today()
 
     item = doc.append("items", {})
@@ -29,7 +28,7 @@ def create_document_with_item(doctype, item_code, qty, rate=None):
     if rate is not None:
         item.rate = rate
 
-    # Sales Order items require schedule_date as well
+    # Sales Order items require schedule_date
     if doctype == "Sales Order":
         item.delivery_date = doc.delivery_date
         item.schedule_date = doc.delivery_date
@@ -53,25 +52,25 @@ class TestPromoEngine(FrappeTestCase):
         return doc.discount_amount
 
     # -------------------------------
-    # QUOTATION TESTS (using promotion_name)
+    # QUOTATION TESTS
     # -------------------------------
 
-    def test_two_for_one_even(self):
+    def test_requeridos_x_gratuitos_even(self):
         self.run_promo_test(
             "Quotation",
             "ONFI 2x1",
             qty=4,
             rate=910,
-            expected=1820
+            expected=1820   # 2 unidades gratis → 2 * 910
         )
 
-    def test_two_for_one_odd(self):
+    def test_requeridos_x_gratuitos_odd(self):
         self.run_promo_test(
             "Quotation",
             "ONFI 2x1",
             qty=3,
             rate=910,
-            expected=910
+            expected=910    # 1 unidad gratis → 910
         )
 
     def test_fixed_price(self):
@@ -109,10 +108,10 @@ class TestPromoEngine(FrappeTestCase):
         self.assertEqual(doc.discount_amount, 123)
 
     # -------------------------------
-    # SALES ORDER TESTS (same logic)
+    # SALES ORDER TESTS
     # -------------------------------
 
-    def test_so_two_for_one_even(self):
+    def test_so_requeridos_x_gratuitos_even(self):
         self.run_promo_test(
             "Sales Order",
             "ONFI 2x1",
@@ -121,7 +120,7 @@ class TestPromoEngine(FrappeTestCase):
             expected=1820
         )
 
-    def test_so_two_for_one_odd(self):
+    def test_so_requeridos_x_gratuitos_odd(self):
         self.run_promo_test(
             "Sales Order",
             "ONFI 2x1",

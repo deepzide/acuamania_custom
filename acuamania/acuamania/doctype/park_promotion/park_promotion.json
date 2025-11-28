@@ -1,6 +1,7 @@
 {
  "actions": [],
  "allow_rename": 1,
+ "autoname": "field:promotion_name",
  "creation": "2025-11-22 12:25:33.418342",
  "doctype": "DocType",
  "engine": "InnoDB",
@@ -15,17 +16,20 @@
   "column_break_uvis",
   "valid_from",
   "valid_upto",
-  "fixed_price",
-  "porcentaje_de_descuento",
+  "required",
+  "free",
   "discount_amount",
+  "fixed_price",
   "section_break_qzik",
-  "park_promotion_items"
+  "park_promotion_items",
+  "discount_percentage"
  ],
  "fields": [
   {
    "fieldname": "promotion_name",
    "fieldtype": "Data",
-   "label": "Nombre de la Promo"
+   "label": "Nombre de la Promo",
+   "unique": 1
   },
   {
    "default": "0",
@@ -47,7 +51,7 @@
    "fieldname": "apply_type",
    "fieldtype": "Select",
    "label": "Tipo de Promo",
-   "options": "\n2x1\n3x2\npercentage\ndiscount_amount\nfixed_price"
+   "options": "\nrequeridos x gratuitos\nporcentaje\nprecio de descuento\nprecio fijo"
   },
   {
    "fieldname": "apply_on_age_group",
@@ -100,15 +104,26 @@
    "fieldtype": "Table",
    "label": "Productos",
    "options": "Park Promotion Item"
+  },
+  {
+   "fieldname": "required",
+   "fieldtype": "Int",
+   "label": "Requerido"
+  },
+  {
+   "fieldname": "free",
+   "fieldtype": "Int",
+   "label": "Gratuito"
   }
  ],
  "grid_page_length": 50,
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2025-11-22 12:52:57.034221",
+ "modified": "2025-11-28 08:05:48.679108",
  "modified_by": "Administrator",
  "module": "Acuamania",
  "name": "Park Promotion",
+ "naming_rule": "By fieldname",
  "owner": "Administrator",
  "permissions": [
   {
