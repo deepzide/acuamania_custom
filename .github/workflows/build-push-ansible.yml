@@ -15,7 +15,7 @@ on:
         required: true
 
 env:
-  SERVER_IP: ${{ github.ref_name == 'main' && '212.56.43.150' || github.ref_name == 'demo' && '212.56.43.212' }}
+  SERVER_IP: ${{ github.ref_name == 'main' && '212.56.43.150' || github.ref_name == 'staging' && '212.56.43.212' }}
 
 jobs:
   build:
