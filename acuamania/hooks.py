@@ -8,7 +8,34 @@ app_license = "unlicense"
 
 fixtures = [
     # {"dt": "Item"},
-    {"dt": "Park Promotion"}
+    {"dt": "Park Promotion"},
+    {"dt": "Lead"},
+    {"dt": "Opportunity"},
+    {"dt": "Quotation"},
+    {"dt": "Sales Order"},
+    {
+        "dt": "Workspace",
+        "filters": [["name", "in", ["Acuamania Analytics"]]],
+    },
+    {
+        "dt": "Number Card",
+        "filters": [
+            [
+                "name",
+                "in",
+                [
+                    "Leads (30d)",
+                    "Oportunidades (30d)",
+                    "Cotizaciones (30d)",
+                    "Ordenes de Venta (30d)",
+                ],
+            ]
+        ],
+    },
+    {
+        "dt": "Report",
+        "filters": [["name", "in", ["Embudo Comercial Acuamania"]]],
+    },
 ]
 
 
@@ -260,4 +287,3 @@ scheduler_events = {
 # default_log_clearing_doctypes = {
 # 	"Logging DocType Name": 30  # days to retain logs
 # }
-
