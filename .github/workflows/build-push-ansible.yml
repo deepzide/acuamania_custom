@@ -64,7 +64,7 @@ jobs:
           context: ./frappe_docker
           file: ./frappe_docker/images/layered/Containerfile
           push: true
-          tags: ${{ secrets.DOCKER_USER }}/acuamania:latest
+          tags: ${{ secrets.DOCKER_USER }}/acuamania:${{ github.ref_name == 'main' && 'latest' || 'demo' }}
           no-cache: true  # ← Solo esto mientras desarrollas
           build-args: |
             FRAPPE_PATH=https://github.com/frappe/frappe
