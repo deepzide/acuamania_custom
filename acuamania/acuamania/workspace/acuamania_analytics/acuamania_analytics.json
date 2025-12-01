@@ -1,0 +1,50 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"hdr_metrics\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Indicadores R\u00e1pidos</b></span>\",\"col\":12}},{\"id\":\"card_leads\",\"type\":\"number_card\",\"data\":{\"card_name\":\"Leads (30d)\",\"col\":3}},{\"id\":\"card_opps\",\"type\":\"number_card\",\"data\":{\"card_name\":\"Oportunidades (30d)\",\"col\":3}},{\"id\":\"card_quot\",\"type\":\"number_card\",\"data\":{\"card_name\":\"Cotizaciones (30d)\",\"col\":3}},{\"id\":\"card_so\",\"type\":\"number_card\",\"data\":{\"card_name\":\"Ordenes de Venta (30d)\",\"col\":3}},{\"id\":\"hdr_reports\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\"><b>Reportes</b></span>\",\"col\":12}},{\"id\":\"link_funnel\",\"type\":\"shortcut\",\"data\":{\"shortcut_name\":\"Embudo Comercial Acuamania\",\"col\":4}}]",
+ "creation": "2024-01-01 00:00:00.000000",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "bar-chart",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Acuamania Analytics",
+ "links": [],
+ "modified": "2024-01-01 00:00:00.000000",
+ "modified_by": "Administrator",
+ "module": "Acuamania",
+ "name": "Acuamania Analytics",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 0,
+ "quick_lists": [],
+ "roles": [
+  {
+   "role": "Administrator"
+  },
+  {
+   "role": "Marketing User"
+  },
+  {
+   "role": "Accounts Manager"
+  },
+  {
+   "role": "Sales Manager"
+  }
+ ],
+ "sequence_id": 0,
+ "shortcuts": [
+  {
+   "color": "Blue",
+   "doc_view": "Report",
+   "label": "Embudo Comercial Acuamania",
+   "link_to": "Embudo Comercial Acuamania",
+   "type": "Report"
+  }
+ ],
+ "title": "Acuamania Analytics"
+}

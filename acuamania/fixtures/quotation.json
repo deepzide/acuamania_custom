@@ -1,0 +1,124 @@
+[
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-001",
+    "opportunity": "OPP-DEMO-001",
+    "party_name": "María González",
+    "status": "Ordered",
+    "grand_total": 1800
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-002",
+    "opportunity": "OPP-DEMO-002",
+    "party_name": "Luis Pereira",
+    "status": "Ordered",
+    "grand_total": 950
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-003",
+    "opportunity": "OPP-DEMO-005",
+    "party_name": "Laura Silva",
+    "status": "Open",
+    "grand_total": 1400
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-004",
+    "opportunity": "OPP-DEMO-006",
+    "party_name": "Pedro Suárez",
+    "status": "Ordered",
+    "grand_total": 3100
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-005",
+    "opportunity": "OPP-DEMO-008",
+    "party_name": "Agustín Padilla",
+    "status": "Ordered",
+    "grand_total": 2600
+  },
+
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-006",
+    "opportunity": "OPP-DEMO-010",
+    "party_name": "Sebastián Cabrera",
+    "status": "Open",
+    "grand_total": 2200
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-007",
+    "opportunity": "OPP-DEMO-011",
+    "party_name": "Martín Duarte",
+    "status": "Ordered",
+    "grand_total": 1800
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-008",
+    "opportunity": "OPP-DEMO-013",
+    "party_name": "Pablo Méndez",
+    "status": "Ordered",
+    "grand_total": 4500
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-009",
+    "opportunity": "OPP-DEMO-015",
+    "party_name": "Diego Fonseca",
+    "status": "Ordered",
+    "grand_total": 1100
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-010",
+    "opportunity": "OPP-DEMO-018",
+    "party_name": "Camila Castro",
+    "status": "Open",
+    "grand_total": 2800
+  },
+
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-011",
+    "opportunity": "OPP-DEMO-020",
+    "party_name": "Nicole Torres",
+    "status": "Ordered",
+    "grand_total": 3300
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-012",
+    "opportunity": "OPP-DEMO-002",
+    "party_name": "Luis Pereira",
+    "status": "Open",
+    "grand_total": 850
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-013",
+    "opportunity": "OPP-DEMO-008",
+    "party_name": "Agustín Padilla",
+    "status": "Ordered",
+    "grand_total": 2400
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-014",
+    "opportunity": "OPP-DEMO-011",
+    "party_name": "Martín Duarte",
+    "status": "Ordered",
+    "grand_total": 1600
+  },
+  {
+    "doctype": "Quotation",
+    "name": "QTN-DEMO-015",
+    "opportunity": "OPP-DEMO-005",
+    "party_name": "Laura Silva",
+    "status": "Open",
+    "grand_total": 1300
+  }
+]
