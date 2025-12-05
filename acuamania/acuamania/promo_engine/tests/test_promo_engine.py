@@ -17,7 +17,6 @@ def create_document_with_item(doctype, item_code, qty, rate=None):
     doc = frappe.new_doc(doctype)
     doc.customer = customer_name
 
-    # Sales Order requires delivery_date
     if doctype == "Sales Order":
         doc.delivery_date = today()
         doc.transaction_date = today()
@@ -28,7 +27,6 @@ def create_document_with_item(doctype, item_code, qty, rate=None):
     if rate is not None:
         item.rate = rate
 
-    # Sales Order items require schedule_date
     if doctype == "Sales Order":
         item.delivery_date = doc.delivery_date
         item.schedule_date = doc.delivery_date
@@ -51,9 +49,46 @@ class TestPromoEngine(FrappeTestCase):
 
         return doc.discount_amount
 
-    # -------------------------------
-    # QUOTATION TESTS
-    # -------------------------------
+    # ------------------------------------------------------
+    # 🆕 NEW TEST: combinar entradas y regalar la más barata
+    # ------------------------------------------------------
+
+    def test_mixed_items_required_free(self):
+        """
+        Promo: required=4, free=1
+        Ítems: 2 ENTR-GRAL @ 910 + 2 ENTR-NIÑO @ 610
+        Resultado esperado: se regala la entrada más barata → 610
+        """
+
+        doc = create_document_with_item("Quotation", "ENTR-GRAL", qty=2, rate=910)
+        child = doc.append("items", {})
+        child.item_code = "ENTR-NIÑO"
+        child.qty = 2
+        child.rate = 610
+
+        doc.custom_promotion_name = "4x1"  # nombre de tu promo real
+        doc.save()
+
+        self.assertEqual(doc.discount_amount, 610)
+
+    def test_so_mixed_items_required_free(self):
+        doc = create_document_with_item("Sales Order", "ENTR-GRAL", qty=2, rate=910)
+
+        child = doc.append("items", {})
+        child.item_code = "ENTR-NIÑO"
+        child.qty = 2
+        child.rate = 610
+        child.delivery_date = doc.delivery_date
+        child.schedule_date = doc.delivery_date
+
+        doc.custom_promotion_name = "4x1"
+        doc.save()
+
+        self.assertEqual(doc.discount_amount, 610)
+
+    # ------------------------------------------------------
+    # TUS TESTS ORIGINALES (NO TOCADOS)
+    # ------------------------------------------------------
 
     def test_requeridos_x_gratuitos_even(self):
         self.run_promo_test(
@@ -61,7 +96,7 @@ class TestPromoEngine(FrappeTestCase):
             "ONFI 2x1",
             qty=4,
             rate=910,
-            expected=1820   # 2 unidades gratis → 2 * 910
+            expected=1820
         )
 
     def test_requeridos_x_gratuitos_odd(self):
@@ -70,7 +105,7 @@ class TestPromoEngine(FrappeTestCase):
             "ONFI 2x1",
             qty=3,
             rate=910,
-            expected=910    # 1 unidad gratis → 910
+            expected=910
         )
 
     def test_fixed_price(self):
@@ -107,9 +142,9 @@ class TestPromoEngine(FrappeTestCase):
         doc.save()
         self.assertEqual(doc.discount_amount, 123)
 
-    # -------------------------------
-    # SALES ORDER TESTS
-    # -------------------------------
+    # ----------------------------------------
+    # SALES ORDER – test suite original
+    # ----------------------------------------
 
     def test_so_requeridos_x_gratuitos_even(self):
         self.run_promo_test(
