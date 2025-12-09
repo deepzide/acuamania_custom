@@ -1,0 +1,35 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"lzlpQlHBJG\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Registros del Bot</span>\",\"col\":12}},{\"id\":\"Zsc3pqinIF\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Registros del Bot\",\"col\":12}}]",
+ "creation": "2025-11-18 12:14:03.933944",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "small-file",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Registros del Bot",
+ "links": [],
+ "modified": "2025-12-09 10:03:58.580421",
+ "modified_by": "Administrator",
+ "module": "Acuamania",
+ "name": "Registros del Bot",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "WhatsApp Bot Logs",
+   "label": "Registros del Bot",
+   "quick_list_filter": "[]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 12.0,
+ "shortcuts": [],
+ "title": "Registros del Bot"
+}

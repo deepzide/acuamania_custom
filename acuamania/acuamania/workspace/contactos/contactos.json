@@ -1,0 +1,35 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"qgH_pIlx_o\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Contactos</span>\",\"col\":12}},{\"id\":\"QU2wtOFVC-\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Contactos\",\"col\":12}}]",
+ "creation": "2025-11-18 12:36:12.647256",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "share",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Contactos",
+ "links": [],
+ "modified": "2025-12-09 10:02:06.710693",
+ "modified_by": "Administrator",
+ "module": "Acuamania",
+ "name": "Contactos",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Contact",
+   "label": "Contactos",
+   "quick_list_filter": "[]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 4.0,
+ "shortcuts": [],
+ "title": "Contactos"
+}

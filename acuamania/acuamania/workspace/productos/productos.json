@@ -1,0 +1,35 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"NbkKbVjlYK\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Productos</span>\",\"col\":12}},{\"id\":\"70VkkUsZdA\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Productos\",\"col\":12}}]",
+ "creation": "2025-11-18 12:00:52.209096",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "money-coins-1",
+ "idx": 0,
+ "indicator_color": "",
+ "is_hidden": 0,
+ "label": "Productos",
+ "links": [],
+ "modified": "2025-12-09 10:04:41.922001",
+ "modified_by": "Administrator",
+ "module": "Acuamania",
+ "name": "Productos",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Item",
+   "label": "Productos",
+   "quick_list_filter": "[]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 10.0,
+ "shortcuts": [],
+ "title": "Productos"
+}
