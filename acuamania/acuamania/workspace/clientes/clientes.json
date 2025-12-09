@@ -1,0 +1,35 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"mW79QZRnSp\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Clientes</span>\",\"col\":12}},{\"id\":\"m4yDK4K0eh\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Clientes\",\"col\":12}}]",
+ "creation": "2025-11-18 12:36:45.516926",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "customer",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Clientes",
+ "links": [],
+ "modified": "2025-12-09 10:03:02.970653",
+ "modified_by": "Administrator",
+ "module": "Acuamania",
+ "name": "Clientes",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Customer",
+   "label": "Clientes",
+   "quick_list_filter": "[]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 5.0,
+ "shortcuts": [],
+ "title": "Clientes"
+}

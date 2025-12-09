@@ -1,0 +1,35 @@
+{
+ "charts": [],
+ "content": "[{\"id\":\"rDux5CpB4v\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Oportunidades</span>\",\"col\":12}},{\"id\":\"fmQWJ6qynU\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Oportunidades\",\"col\":12}}]",
+ "creation": "2025-11-18 11:58:12.869485",
+ "custom_blocks": [],
+ "docstatus": 0,
+ "doctype": "Workspace",
+ "for_user": "",
+ "hide_custom": 0,
+ "icon": "tick",
+ "idx": 0,
+ "indicator_color": "green",
+ "is_hidden": 0,
+ "label": "Oportunidades",
+ "links": [],
+ "modified": "2025-12-09 10:03:10.640279",
+ "modified_by": "Administrator",
+ "module": "Acuamania",
+ "name": "Oportunidades",
+ "number_cards": [],
+ "owner": "Administrator",
+ "parent_page": "",
+ "public": 1,
+ "quick_lists": [
+  {
+   "document_type": "Opportunity",
+   "label": "Oportunidades",
+   "quick_list_filter": "[]"
+  }
+ ],
+ "roles": [],
+ "sequence_id": 7.0,
+ "shortcuts": [],
+ "title": "Oportunidades"
+}
