@@ -5,11 +5,28 @@
   vars:
     project_dir: /opt/erpnext
     repo_url: https://github.com/frappe/frappe_docker.git
-    target_image: dcorps/acuamania:latest
     site_name: frontend
     admin_password: admin  # puedes cambiarla si quieres
 
   tasks:
+    # ------------------------------------------------------------------------
+    # 🔍 Detectar rama actual de Git
+    # ------------------------------------------------------------------------
+    - name: Detect current Git branch
+      ansible.builtin.shell: git rev-parse --abbrev-ref HEAD
+      register: git_branch_result
+      changed_when: false
+      delegate_to: localhost
+      become: false
+
+    - name: Set target_image based on branch
+      ansible.builtin.set_fact:
+        target_image: "{{ 'dcorps/acuamania:demo' if git_branch_result.stdout == 'staging' else 'dcorps/acuamania:latest' }}"
+
+    - name: Display selected image
+      ansible.builtin.debug:
+        msg: "🐳 Using image: {{ target_image }} (branch: {{ git_branch_result.stdout }})"
+
     # ------------------------------------------------------------------------
     # 🗂️ Preparación del servidor
     # ------------------------------------------------------------------------
