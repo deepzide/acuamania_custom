@@ -1,5 +1,5 @@
-from acuamania.events.lead.classify_lead import is_new_or_recurrent
+from acuamania.events.lead.classify_lead import classify_lead_before_save
 
 
 def before_save(doc, method=None):
-    is_new_or_recurrent(doc)
+    classify_lead_before_save(doc)

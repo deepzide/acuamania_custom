@@ -176,6 +176,7 @@ doc_events = {
         "validate": "acuamania.validations.lead.validate_lead.validate_lead",
         "after_insert": "acuamania.events.lead.after_insert.after_insert",
         "before_insert": "acuamania.events.lead.before_insert.before_insert",
+        "before_save": "acuamania.events.lead.before_save.before_save",
     },
     "Contact": {
         "before_save": "acuamania.events.contact.before_save.before_save",
