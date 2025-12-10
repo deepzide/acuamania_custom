@@ -20,6 +20,7 @@ def create_record(entry):
     """Create a new Territory record."""
     doc = frappe.new_doc(DOCTYPE)
     doc.territory_name = entry.get("territory_name")
+    doc.custom_is_resident = entry.get("custom_is_resident", 0)
     doc.parent_territory = entry.get("parent_territory", "All Territories")
     doc.save(ignore_permissions=True)
 
