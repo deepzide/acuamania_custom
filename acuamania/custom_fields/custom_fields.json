@@ -164,6 +164,20 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
+    },    
+    {
+      "fieldname": "custom_combo_promotion_name",
+      "label": "Promoción Combo",
+      "fieldtype": "Link",
+      "options": "Park Promotion",
+      "insert_after": "discount_amount"
+    },
+    {
+      "fieldname": "custom_combo_selected_promotion",
+      "label": "Promoción Combo Seleccionada",
+      "fieldtype": "Data",
+      "insert_after": "custom_combo_promotion_name",
+      "read_only": 1
     }
   ],
 
@@ -206,6 +220,20 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "custom_combo_promotion_name",
+      "label": "Promoción Combo",
+      "fieldtype": "Link",
+      "options": "Park Promotion",
+      "insert_after": "discount_amount"
+    },
+    {
+      "fieldname": "custom_combo_selected_promotion",
+      "label": "Promoción Combo Seleccionada",
+      "fieldtype": "Data",
+      "insert_after": "custom_combo_promotion_name",
+      "read_only": 1
     }
   ],
 
