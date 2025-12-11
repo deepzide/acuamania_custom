@@ -174,13 +174,14 @@ fixtures = [
 doc_events = {
     "Lead": {
         "validate": "acuamania.validations.lead.validate_lead.validate_lead",
+        "on_update": "acuamania.events.lead.on_update.on_update",
         "after_insert": "acuamania.events.lead.after_insert.after_insert",
         "before_insert": "acuamania.events.lead.before_insert.before_insert",
         "before_save": "acuamania.events.lead.before_save.before_save",
     },
     "Contact": {
         "before_save": "acuamania.events.contact.before_save.before_save",
-        "after_save": "acuamania.events.contact.after_save.after_save",
+        "on_update": "acuamania.events.contact.on_update.on_update",
         "before_insert": "acuamania.events.contact.before_insert.before_insert",
     },
     "Sales Order": {

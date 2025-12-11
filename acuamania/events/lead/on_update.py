@@ -1,5 +1,5 @@
 from acuamania.events.lead.propagate_classifications import propagate_classifications
 
 
-def after_save(doc, method=None):
+def on_update(doc, method=None):
     propagate_classifications(doc)

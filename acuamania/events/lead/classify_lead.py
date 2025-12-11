@@ -20,7 +20,7 @@ def classify_lead(doc):
 
 def classify_lead_before_save(doc):
     """
-    Classyfy Lead categories before save.
+    Classify Lead categories before save.
     """
     classify_group(doc)
     classify_corporate(doc)
@@ -44,26 +44,32 @@ def classify_customer_status(doc):
 
 
 def classify_group(doc):
-    if getattr(doc, "custom_person_qty", 1) > 1:
+    custom_person_qty = getattr(doc, "custom_person_qty", 1)
+
+    if custom_person_qty > 1:
         _apply_to_lead(doc, {GROUP_CATEGORY})
 
-    if getattr(doc, "custom_person_qty", 1) <= 1:
+    if custom_person_qty <= 1:
         _remove_category(doc, GROUP_CATEGORY)
     
 
 def classify_corporate(doc):
-    if getattr(doc, "is_corpo", 0):
+    is_corpo = getattr(doc, "is_corpo", 0)
+
+    if is_corpo:
         _apply_to_lead(doc, {CORPORATE_CATEGORY})
 
-    if not getattr(doc, "is_corpo", 0):
+    if not is_corpo:
         _remove_category(doc, CORPORATE_CATEGORY)
 
 
 def classify_hotel(doc):
-    if getattr(doc, "custom_has_hotel_voucher", 0):
+    is_hotel = getattr(doc, "custom_has_hotel_voucher", 0)
+
+    if is_hotel:
         _apply_to_lead(doc, {HOTEL_CATEGORY})
 
-    if not getattr(doc, "custom_has_hotel_voucher", 0):
+    if not is_hotel:
         _remove_category(doc, HOTEL_CATEGORY)
 
 
@@ -76,7 +82,7 @@ def classify_resident(doc):
 
 
 def _is_resident_territory(doc):
-    territory = getattr(doc, "territory", None)
+    territory = getattr(doc, "territory", None) or getattr(doc, "custom_territory", None)
     if not territory:
         return False
 

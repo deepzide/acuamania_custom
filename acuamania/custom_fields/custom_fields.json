@@ -100,6 +100,12 @@
       "label": "Texto de Transcripción",
       "fieldtype": "Text",
       "insert_after": "image"
+    },
+    {
+      "fieldname": "custom_person_qty",
+      "label": "Cantidad de Personas",
+      "fieldtype": "Int",
+      "insert_after": "custom_customer_category"
     }
   ],
 
