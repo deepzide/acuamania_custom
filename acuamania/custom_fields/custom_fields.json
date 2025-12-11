@@ -133,18 +133,11 @@
 
   "Quotation": [
     {
-      "fieldname": "custom_promotion_name",
-      "label": "Promoción",
-      "fieldtype": "Link",
-      "options": "Park Promotion",
+      "fieldname": "custom_promotion_table",
+      "label": "Promociones",
+      "fieldtype": "Table",
+      "options": "Park Promotion Selection",
       "insert_after": "apply_discount_on"
-    },
-    {
-      "fieldname": "custom_selected_promotion",
-      "label": "Promoción Seleccionada",
-      "fieldtype": "Data",
-      "insert_after": "custom_promotion_name",
-      "read_only": 1
     },
     {
       "fieldname": "custom_customer_category",
@@ -164,24 +157,17 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
-    },    
-    {
-      "fieldname": "custom_combo_promotion_name",
-      "label": "Promoción Combo",
-      "fieldtype": "Link",
-      "options": "Park Promotion",
-      "insert_after": "discount_amount"
-    },
-    {
-      "fieldname": "custom_combo_selected_promotion",
-      "label": "Promoción Combo Seleccionada",
-      "fieldtype": "Data",
-      "insert_after": "custom_combo_promotion_name",
-      "read_only": 1
     }
   ],
 
   "Sales Order": [
+    {
+      "fieldname": "custom_promotion_table",
+      "label": "Promociones",
+      "fieldtype": "Table",
+      "options": "Park Promotion Selection",
+      "insert_after": "apply_discount_on"
+    },
     {
       "fieldname": "custom_email",
       "label": "Correo Electrónico Custom",
@@ -189,20 +175,6 @@
       "insert_after": "contact_email"
     },
     {
-      "fieldname": "custom_promotion_name",
-      "label": "Promoción",
-      "fieldtype": "Link",
-      "options": "Park Promotion",
-      "insert_after": "apply_discount_on"
-    },
-    {
-      "fieldname": "custom_selected_promotion",
-      "label": "Promoción Seleccionada",
-      "fieldtype": "Data",
-      "insert_after": "custom_promotion_name",
-      "read_only": 1
-    },
-    {
       "fieldname": "custom_customer_category",
       "label": "Categoría del Cliente",
       "fieldtype": "Table MultiSelect",
@@ -220,20 +192,6 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
-    },
-    {
-      "fieldname": "custom_combo_promotion_name",
-      "label": "Promoción Combo",
-      "fieldtype": "Link",
-      "options": "Park Promotion",
-      "insert_after": "discount_amount"
-    },
-    {
-      "fieldname": "custom_combo_selected_promotion",
-      "label": "Promoción Combo Seleccionada",
-      "fieldtype": "Data",
-      "insert_after": "custom_combo_promotion_name",
-      "read_only": 1
     }
   ],
 
