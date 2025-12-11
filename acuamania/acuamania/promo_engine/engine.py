@@ -16,9 +16,10 @@ def apply_selected_promotion(doc, method=None):
     frappe.msgprint("🔵 DEBUG: Entrando a apply_selected_promotion()")
 
     promo_name = getattr(doc, "custom_promotion_name", None)
+    combo_promo_name = getattr(doc, "custom_combo_promotion_name", None)
     frappe.msgprint(f"🔵 DEBUG: Promoción seleccionada = {promo_name}")
 
-    if not promo_name:
+    if not promo_name and not combo_promo_name:
         frappe.msgprint("🟡 DEBUG: No hay promoción seleccionada → No se aplica")
         return
 
