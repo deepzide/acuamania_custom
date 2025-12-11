@@ -258,7 +258,6 @@
       "insert_after": "custom_has_hotel_voucher"
     }
   ],
-
   "Item": [
     {
       "fieldname": "custom_age_group",
@@ -266,6 +265,14 @@
       "fieldtype": "Select",
       "options": "children\nadults\nboth",
       "insert_after": "item_group"
+    }
+  ],
+  "Territory": [
+    {
+      "fieldname": "custom_is_resident",
+      "label": "Es Residencial",
+      "fieldtype": "Check",
+      "insert_after": "territory_name"
     }
   ]
 }
