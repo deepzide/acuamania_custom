@@ -1,39 +1,96 @@
 import frappe
 
 STATUS_CATEGORIES = {"Nuevo", "Recurrente"}
+RESIDENT_CATEGORY = "Residente"
 GROUP_CATEGORY = "Grupo"
 CORPORATE_CATEGORY = "Corporativo"
 HOTEL_CATEGORY = "Hotel"
 
 
 def classify_lead(doc):
-    """Classify Lead as Nuevo/Recurrente/Grupo/Corporativo/Hotel before insert."""
+    """
+    Classify Lead categories.
+    """
+    classify_customer_status(doc)
+    classify_group(doc)
+    classify_corporate(doc)
+    classify_hotel(doc)
+    classify_resident(doc)
+
+
+def classify_lead_before_save(doc):
+    """
+    Classify Lead categories before save.
+    """
+    classify_group(doc)
+    classify_corporate(doc)
+    classify_hotel(doc)
+    classify_resident(doc)
+
+
+def classify_customer_status(doc):
+    """
+    Clasifica como Nuevo/Recurrente.
+    Atomizado para ejecutarse desde cualquier hook.
+    """
     phone_number = (doc.phone or "").strip()
     if not phone_number:
         return
 
-    contact_name = frappe.db.exists("Contact", {"phone": phone_number})
-    base_status = "Recurrente" if contact_name else "Nuevo"
+    contact_exists = frappe.db.exists("Contact", {"phone": phone_number})
+    status = "Recurrente" if contact_exists else "Nuevo"
 
-    classifications = {base_status}
-    classifications.update(_resolve_additional(doc))
-    _apply_to_lead(doc, classifications)
+    _apply_to_lead(doc, {status})
 
 
-def _resolve_additional(doc):
-    """Return additional classifications based on custom fields."""
-    results = set()
-    if getattr(doc, "custom_person_qty", 1) > 1:
-        results.add(GROUP_CATEGORY)
-    if getattr(doc, "is_corpo", 0):
-        results.add(CORPORATE_CATEGORY)
-    if getattr(doc, "custom_has_hotel_voucher", 0):
-        results.add(HOTEL_CATEGORY)
-    return results
+def classify_group(doc):
+    custom_person_qty = getattr(doc, "custom_person_qty", 1)
+
+    if custom_person_qty > 1:
+        _apply_to_lead(doc, {GROUP_CATEGORY})
+
+    if custom_person_qty <= 1:
+        _remove_category(doc, GROUP_CATEGORY)
+    
+
+def classify_corporate(doc):
+    is_corpo = getattr(doc, "is_corpo", 0)
+
+    if is_corpo:
+        _apply_to_lead(doc, {CORPORATE_CATEGORY})
+
+    if not is_corpo:
+        _remove_category(doc, CORPORATE_CATEGORY)
+
+
+def classify_hotel(doc):
+    is_hotel = getattr(doc, "custom_has_hotel_voucher", 0)
+
+    if is_hotel:
+        _apply_to_lead(doc, {HOTEL_CATEGORY})
+
+    if not is_hotel:
+        _remove_category(doc, HOTEL_CATEGORY)
+
+
+def classify_resident(doc):
+    if _is_resident_territory(doc):
+        _apply_to_lead(doc, {RESIDENT_CATEGORY})
+
+    if not _is_resident_territory(doc):
+        _remove_category(doc, RESIDENT_CATEGORY)
+
+
+def _is_resident_territory(doc):
+    territory = getattr(doc, "territory", None) or getattr(doc, "custom_territory", None)
+    if not territory:
+        return False
+
+    is_resident = frappe.db.get_value("Territory", territory, "custom_is_resident")
+    return bool(is_resident)
 
 
 def _apply_to_lead(lead_doc, categories):
-    """Assign categories to Lead, ensuring 'Nuevo' and 'Recurrente' exclusivity."""
     for category in categories:
         if category in STATUS_CATEGORIES:
             _set_exclusive_status(lead_doc, category)
@@ -41,22 +98,34 @@ def _apply_to_lead(lead_doc, categories):
             _append_if_missing(lead_doc, category)
 
 
-def _set_exclusive_status(document, status):
-    """Keep only one of 'Nuevo' or 'Recurrente'."""
+def _set_exclusive_status(doc, status):
     opposite = "Recurrente" if status == "Nuevo" else "Nuevo"
-    preserved = [r for r in document.custom_customer_category if r.customer_category != opposite]
-    has_status = any(r.customer_category == status for r in preserved)
 
-    document.set("custom_customer_category", [])
-    for row in preserved:
-        document.append("custom_customer_category", {"customer_category": row.customer_category})
+    preserved = [
+        r for r in doc.custom_customer_category
+        if r.customer_category != opposite
+    ]
 
-    if not has_status:
-        document.append("custom_customer_category", {"customer_category": status})
+    doc.set("custom_customer_category", preserved)
+
+    if not any(r.customer_category == status for r in preserved):
+        doc.append("custom_customer_category", {"customer_category": status})
 
 
-def _append_if_missing(document, category):
-    """Append category if not already present."""
-    existing = [r.customer_category for r in document.custom_customer_category]
+def _append_if_missing(doc, category):
+    existing = [r.customer_category for r in doc.custom_customer_category]
     if category not in existing:
-        document.append("custom_customer_category", {"customer_category": category})
+        doc.append("custom_customer_category", {"customer_category": category})
+
+
+def _remove_category(doc, category_name):
+    """
+    Remove a category.
+    """
+
+    preserved = [
+        row for row in doc.custom_customer_category
+        if row.customer_category != category_name
+    ]
+
+    doc.set("custom_customer_category", preserved)

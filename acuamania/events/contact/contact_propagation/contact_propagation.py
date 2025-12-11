@@ -1,22 +1,16 @@
 import frappe
 from frappe.utils import now
+
+from acuamania.utils.sync import with_sync_guard
 from acuamania.events.contact.contact_propagation.config import CONTACT_LINK_FIELDS, CONTACT_FIELD_MAPPING
 
 
+@with_sync_guard
 def contact_propagation(contact_doc, method=None):
     """Propagate Contact fields (source, territory, email, etc.) to all linked doctypes."""
-    if frappe.flags.in_patch or frappe.flags.in_migrate:
-        return
 
-    if frappe.flags.get("skip_contact_sync"):
-        return
-
-    frappe.flags.skip_contact_sync = True
-    try:
-        for target_doctype, link_def in CONTACT_LINK_FIELDS.items():
-            _sync_linked_docs(contact_doc, target_doctype, link_def)
-    finally:
-        frappe.flags.skip_contact_sync = False
+    for target_doctype, link_def in CONTACT_LINK_FIELDS.items():
+        _sync_linked_docs(contact_doc, target_doctype, link_def)
 
 
 def _sync_linked_docs(contact_doc, target_doctype, link_def):
@@ -60,6 +54,7 @@ def _apply_field_mapping(contact_doc, target_doctype, doc_name, mapping, contact
         new_value = contact_data.get(source_field)
         if new_value is None:
             continue
+
         if doc.get(target_field) != new_value:
             doc.set(target_field, new_value)
             updated = True

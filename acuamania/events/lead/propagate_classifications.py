@@ -1,8 +1,10 @@
 import frappe
+from acuamania.utils.sync import with_sync_guard
 
 
-def propagate_classifications(doc):
-    """Propagate Lead classifications to Contact and Customer after insert by copying categories as-is."""
+@with_sync_guard
+def propagate_classifications(doc, method=None):
+    """Propagate Lead classifications to Contact and Customer."""
     phone_number = (doc.phone or "").strip()
     if not phone_number:
         return
@@ -19,25 +21,23 @@ def propagate_classifications(doc):
         return
 
     _copy_categories(contact_doc, lead_categories)
+
     if customer_doc:
         _copy_categories(customer_doc, lead_categories)
 
 
 def _collect_lead_classifications(lead_doc):
-    """Return the list of classifications stored on the Lead."""
     if not getattr(lead_doc, "custom_customer_category", None):
         return []
     return [row.customer_category for row in lead_doc.custom_customer_category]
 
 
 def _get_customer_by_contact(contact_doc):
-    """Return the Customer linked to this Contact."""
     name = frappe.db.get_value("Customer", {"customer_primary_contact": contact_doc.name})
     return frappe.get_doc("Customer", name) if name else None
 
 
 def _copy_categories(target_doc, categories):
-    """Replace the target document's categories with those from the Lead."""
     if not hasattr(target_doc, "custom_customer_category"):
         return
 

@@ -22,6 +22,12 @@
       "insert_after": "custom_person_qty"
     },
     {
+      "fieldname": "is_corpo",
+      "label": "Es Corporativo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_hotel_voucher"
+    },
+    {
       "fieldname": "custom_contact_name",
       "label": "Nombre del Contacto",
       "fieldtype": "Link",
@@ -29,12 +35,13 @@
       "insert_after": "email_id"
     },
     {
-      "fieldname": "is_corpo",
-      "label": "Es Corporativo",
+      "fieldname": "custom_is_resident",
+      "label": "Es Residente",
       "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
+      "insert_after": "territory"
     }
   ],
+
   "Contact": [
     {
       "fieldname": "custom_transcriptions",
@@ -93,8 +100,37 @@
       "label": "Texto de Transcripción",
       "fieldtype": "Text",
       "insert_after": "image"
+    },
+    {
+      "fieldname": "custom_person_qty",
+      "label": "Cantidad de Personas",
+      "fieldtype": "Int",
+      "insert_after": "custom_customer_category"
     }
   ],
+
+  "Opportunity": [
+    {
+      "fieldname": "custom_customer_category",
+      "label": "Categoría del Cliente",
+      "fieldtype": "Table MultiSelect",
+      "options": "Customer__Customer_Category",
+      "insert_after": "customer_name"
+    },
+    {
+      "fieldname": "custom_has_hotel_voucher",
+      "label": "Posee Voucher de Hotel",
+      "fieldtype": "Check",
+      "insert_after": "custom_customer_category"
+    },
+    {
+      "fieldname": "is_corpo",
+      "label": "Es Corporativo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_hotel_voucher"
+    }
+  ],
+
   "Quotation": [
     {
       "fieldname": "custom_promotion_name",
@@ -109,8 +145,42 @@
       "fieldtype": "Data",
       "insert_after": "custom_promotion_name",
       "read_only": 1
+    },
+    {
+      "fieldname": "custom_customer_category",
+      "label": "Categoría del Cliente",
+      "fieldtype": "Table MultiSelect",
+      "options": "Customer__Customer_Category",
+      "insert_after": "contact_person"
+    },
+    {
+      "fieldname": "custom_has_hotel_voucher",
+      "label": "Posee Voucher de Hotel",
+      "fieldtype": "Check",
+      "insert_after": "custom_customer_category"
+    },
+    {
+      "fieldname": "is_corpo",
+      "label": "Es Corporativo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_hotel_voucher"
+    },    
+    {
+      "fieldname": "custom_combo_promotion_name",
+      "label": "Promoción Combo",
+      "fieldtype": "Link",
+      "options": "Park Promotion",
+      "insert_after": "discount_amount"
+    },
+    {
+      "fieldname": "custom_combo_selected_promotion",
+      "label": "Promoción Combo Seleccionada",
+      "fieldtype": "Data",
+      "insert_after": "custom_combo_promotion_name",
+      "read_only": 1
     }
   ],
+
   "Sales Order": [
     {
       "fieldname": "custom_email",
@@ -118,7 +188,7 @@
       "fieldtype": "Data",
       "insert_after": "contact_email"
     },
-        {
+    {
       "fieldname": "custom_promotion_name",
       "label": "Promoción",
       "fieldtype": "Link",
@@ -131,8 +201,42 @@
       "fieldtype": "Data",
       "insert_after": "custom_promotion_name",
       "read_only": 1
+    },
+    {
+      "fieldname": "custom_customer_category",
+      "label": "Categoría del Cliente",
+      "fieldtype": "Table MultiSelect",
+      "options": "Customer__Customer_Category",
+      "insert_after": "contact_person"
+    },
+    {
+      "fieldname": "custom_has_hotel_voucher",
+      "label": "Posee Voucher de Hotel",
+      "fieldtype": "Check",
+      "insert_after": "custom_customer_category"
+    },
+    {
+      "fieldname": "is_corpo",
+      "label": "Es Corporativo",
+      "fieldtype": "Check",
+      "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "custom_combo_promotion_name",
+      "label": "Promoción Combo",
+      "fieldtype": "Link",
+      "options": "Park Promotion",
+      "insert_after": "discount_amount"
+    },
+    {
+      "fieldname": "custom_combo_selected_promotion",
+      "label": "Promoción Combo Seleccionada",
+      "fieldtype": "Data",
+      "insert_after": "custom_combo_promotion_name",
+      "read_only": 1
     }
   ],
+
   "Customer": [
     {
       "fieldname": "custom_customer_category",
@@ -154,6 +258,7 @@
       "insert_after": "custom_has_hotel_voucher"
     }
   ],
+
   "Item": [
     {
       "fieldname": "custom_age_group",

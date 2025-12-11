@@ -34,10 +34,28 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan github.com >> ~/.ssh/known_hosts
 
-      # 3️⃣ Encode apps.json
-      - name: Encode apps.json
+      # 3️⃣ Update and encode apps.json
+      - name: Update branch in apps.json and encode
         id: encode
         run: |
+          # Determine the branch based on the current ref
+          BRANCH="${{ github.ref_name }}"
+          
+          # Update the branch for acuamania_custom.git in apps.json
+          jq --arg branch "$BRANCH" '
+            map(
+              if .url == "https://github.com/deepzide/acuamania_custom.git" 
+              then .branch = $branch 
+              else . 
+              end
+            )
+          ' apps.json > apps.json.tmp && mv apps.json.tmp apps.json
+          
+          # Show the updated apps.json for verification
+          echo "Updated apps.json:"
+          cat apps.json
+          
+          # Encode to base64
           export APPS_JSON_BASE64=$(base64 -w 0 apps.json)
           echo "APPS_JSON_BASE64=$APPS_JSON_BASE64" >> $GITHUB_ENV
 

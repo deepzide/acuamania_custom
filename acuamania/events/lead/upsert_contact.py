@@ -20,31 +20,25 @@ MSG_NEW_CONTACT = "Contacto {name} creado automáticamente y vinculado al Lead."
 
 
 def get_logger():
-    """Return a logger that writes to both stdout and a log file, visible in tests and runtime."""
     logger_name = "lead_contact_sync"
     logger = logging.getLogger(logger_name)
 
     if not logger.handlers:
-        # Ensure log directory exists
-        site_name = frappe.local.site or frappe.get_site_path().split(os.sep)[-2]
         log_dir = frappe.get_site_path("logs")
         os.makedirs(log_dir, exist_ok=True)
 
         log_path = os.path.join(log_dir, f"{logger_name}.log")
 
-        # --- Console handler (visible in bench run-tests output) ---
         console_handler = logging.StreamHandler(sys.stdout)
         console_handler.setLevel(logging.DEBUG)
         console_format = logging.Formatter("[%(levelname)s] %(message)s")
         console_handler.setFormatter(console_format)
 
-        # --- File handler (persistent file logs) ---
         file_handler = logging.FileHandler(log_path, mode="a", encoding="utf-8")
         file_handler.setLevel(logging.DEBUG)
         file_format = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
         file_handler.setFormatter(file_format)
 
-        # --- Attach both handlers ---
         logger.addHandler(console_handler)
         logger.addHandler(file_handler)
         logger.propagate = False
@@ -57,64 +51,61 @@ def get_logger():
 
 
 def upsert_contact(doc, method):
-    """Create or link a Contact from a Lead record."""
+    """
+    MAIN entry: Validate, retrieve or create Contact, then link to Lead.
+    Atomic, predictable, and side-effect safe.
+    """
     logger = get_logger()
-    phone = getattr(doc, PHONE_FIELD, "").strip()
-    lead_name = getattr(doc, "name", "UNKNOWN")
+    phone = _extract_phone(doc)
+    lead_name = doc.name
 
     logger.info(f"📞 upsert_contact triggered for Lead '{lead_name}' with phone '{phone}'")
 
-    if not phone:
-        logger.warning(f"❌ Lead '{lead_name}' missing phone number — cannot create Contact")
-        frappe.throw(MSG_NO_PHONE)
+    _validate_lead_has_phone(doc)
 
-    contact = get_or_create_contact_from_lead(doc)
-    link_contact_to_lead(doc, contact)
+    contact = _get_existing_contact(phone) or _create_new_contact(doc, phone)
+    _link_contact_to_lead(doc, contact)
 
     logger.info(f"✅ Lead '{lead_name}' linked to Contact '{contact.name}'")
 
 
-def get_or_create_contact_from_lead(doc):
-    """Retrieve existing Contact or create a new one based on Lead info."""
+def _validate_lead_has_phone(doc):
+    phone = getattr(doc, PHONE_FIELD, "").strip()
+    if not phone:
+        raise frappe.ValidationError(MSG_NO_PHONE)
+
+
+def _get_existing_contact(phone):
+    """
+    Returns an existing Contact doc OR None.
+    Does NOT create or modify anything.
+    """
     logger = get_logger()
-    phone_number = getattr(doc, PHONE_FIELD, "").strip()
-    lead_name = getattr(doc, "name", "UNKNOWN")
 
-    logger.info(f"🔍 Searching Contact for Lead '{lead_name}' (phone={phone_number})")
+    if not phone:
+        return None
 
-    # --- Direct match by Contact.phone ---
-    existing_contact_name = frappe.db.exists(CONTACT_DOCTYPE, {PHONE_FIELD: phone_number})
-    logger.debug(f"Direct match by Contact.phone: {existing_contact_name}")
+    logger.info(f"🔍 Searching Contact for phone '{phone}'")
 
-    # --- Additional lookup in Contact.mobile_no if not found ---
-    if not existing_contact_name:
-        existing_contact_name = frappe.db.exists(CONTACT_DOCTYPE, {MOBILE_FIELD: phone_number})
-        logger.debug(f"Secondary match by Contact.mobile_no: {existing_contact_name}")
+    contact_name = frappe.db.exists(CONTACT_DOCTYPE, {PHONE_FIELD: phone})
 
-    # --- Guard for invalid or deleted contact names ---
-    if existing_contact_name and not frappe.db.exists(CONTACT_DOCTYPE, existing_contact_name):
-        logger.warning(f"⚠️ Stale reference found: Contact '{existing_contact_name}' no longer exists.")
-        existing_contact_name = None
+    if not contact_name:
+        contact_name = frappe.db.exists(CONTACT_DOCTYPE, {MOBILE_FIELD: phone})
 
-    if existing_contact_name:
-        logger.info(f"Reusing existing Contact '{existing_contact_name}' for Lead '{lead_name}'")
-        logger.debug(MSG_EXISTING_CONTACT.format(name=existing_contact_name))
-        return frappe.get_doc(CONTACT_DOCTYPE, existing_contact_name)
+    if contact_name:
+        logger.info(MSG_EXISTING_CONTACT.format(name=contact_name))
+        return frappe.get_doc(CONTACT_DOCTYPE, contact_name)
 
-    # --- Otherwise, create a new Contact ---
-    contact = build_contact_from_lead(doc, phone_number)
-    contact.insert(ignore_permissions=True)
-    contact.reload()
-
-    logger.info(f"🆕 Created new Contact '{contact.name}' from Lead '{lead_name}'")
-    logger.debug(MSG_NEW_CONTACT.format(name=contact.name))
-    return contact
+    return None
 
 
-def build_contact_from_lead(doc, phone_number):
-    """Prepare a new Contact document from Lead data."""
+def _create_new_contact(doc, phone):
+    """
+    Builds and inserts a new Contact based on Lead info.
+    Clean, focused, no lookups here.
+    """
     logger = get_logger()
-    lead_name = getattr(doc, "name", "UNKNOWN")
+    lead_name = doc.name
 
     contact = frappe.new_doc(CONTACT_DOCTYPE)
     contact.first_name = getattr(doc, "first_name", "") or getattr(doc, "lead_name", "")
@@ -123,32 +114,45 @@ def build_contact_from_lead(doc, phone_number):
     contact.gender = getattr(doc, "gender", "")
     contact.designation = getattr(doc, "job_title", "")
     contact.company_name = getattr(doc, "company_name", "")
-    contact.phone = phone_number
+    contact.phone = phone
     contact.custom_territory = getattr(doc, "territory", "")
+    contact.custom_person_qty = getattr(doc, "custom_person_qty", 1)
 
-    logger.debug(
-        f"⚙️ Building Contact for Lead '{lead_name}': "
-        f"{contact.first_name} {contact.last_name} ({phone_number})"
-    )
-    contact.append(PHONE_CHILD_TABLE, {"phone": phone_number, "is_primary_phone": 1})
-    
-    logger.debug(f"Contact data → {contact.as_dict()}")
+    contact.append(PHONE_CHILD_TABLE, {"phone": phone, "is_primary_phone": 1})
+
+    logger.info(f"🆕 Creating Contact from Lead '{lead_name}' → {contact.first_name} {contact.last_name} ({phone})")
+    contact.insert(ignore_permissions=True)
+    contact.reload()
+
+    logger.info(MSG_NEW_CONTACT.format(name=contact.name))
     return contact
 
 
-def link_contact_to_lead(doc, contact):
-    """Link the Contact back to the Lead via the custom field."""
+def _link_contact_to_lead(doc, contact):
+    """
+    Ensures bidirectional linking safely and atomically.
+    Only updates if necessary.
+    """
     logger = get_logger()
-    current_contact = getattr(doc, CUSTOM_CONTACT_LINK_FIELD, None)
-    lead_name = getattr(doc, "name", "UNKNOWN")
+    lead_name = doc.name
+    current = getattr(doc, CUSTOM_CONTACT_LINK_FIELD, None)
 
-    logger.info(f"🔗 Linking Lead '{lead_name}' to Contact '{contact.name}' (current={current_contact})")
+    logger.info(f"🔗 Linking Lead '{lead_name}' to Contact '{contact.name}' (current={current})")
 
-    if current_contact == contact.name:
-        logger.debug(f"Link already exists for Lead '{lead_name}', skipping.")
+    if current == contact.name:
+        logger.debug("Link already exists, skipping.")
         return
 
     setattr(doc, CUSTOM_CONTACT_LINK_FIELD, contact.name)
     doc.save(ignore_permissions=True)
 
-    logger.info(f"✅ Contact '{contact.name}' linked successfully to Lead '{lead_name}'")
+    logger.info(f"✅ Contact '{contact.name}' linked to Lead '{lead_name}'")
+
+
+def _extract_phone(doc):
+    """
+    Extract lead phone consistently.
+    Centralizing this avoids duplicated stripping logic.
+    """
+    phone = getattr(doc, PHONE_FIELD, "")
+    return phone.strip() if phone else ""
