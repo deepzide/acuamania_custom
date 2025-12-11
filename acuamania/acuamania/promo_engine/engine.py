@@ -10,110 +10,122 @@ from acuamania.acuamania.promo_engine.rules import (
 
 def apply_selected_promotion(doc, method=None):
     """
-    Hook para Quotation (validate o before_save).
+    Runs on Quotation/Sales Order validate.
+    Calculates:
+      • Promo normal → custom_promotion_name
+      • Promo combo → custom_combo_promotion_name
+    Applies BOTH discounts summed.
+    Does NOT modify selection fields.
     """
 
-    frappe.msgprint("🔵 DEBUG: Entrando a apply_selected_promotion()")
+    reset_discount_fields(doc)
 
-    promo_name = getattr(doc, "custom_promotion_name", None)
-    combo_promo_name = getattr(doc, "custom_combo_promotion_name", None)
-    frappe.msgprint(f"🔵 DEBUG: Promoción seleccionada = {promo_name}")
+    promo_name = safe_get(doc, "custom_promotion_name")
+    combo_promo_name = safe_get(doc, "custom_combo_promotion_name")
 
-    if not promo_name and not combo_promo_name:
-        frappe.msgprint("🟡 DEBUG: No hay promoción seleccionada → No se aplica")
-        return
-
-    # --- 1) Cargar promoción ---
-    try:
-        frappe.msgprint(f"🔵 DEBUG: Cargando Park Promotion '{promo_name}'")
-        promo = frappe.get_doc("Park Promotion", promo_name)
-        frappe.msgprint(f"🟢 DEBUG: Promoción cargada con éxito → {promo.promotion_name}")
-    except frappe.DoesNotExistError:
-        frappe.msgprint("🔴 ERROR: La promoción seleccionada NO existe en el sistema")
-        return
-
-    # --- 2) Agrupar ítems ---
-    frappe.msgprint("🔵 DEBUG: Agrupando ítems por código...")
     items_by_code = group_items_by_code(doc)
-
     if not items_by_code:
-        frappe.msgprint("🔴 ERROR: No hay ítems para aplicar promoción")
         return
 
-    frappe.msgprint(f"🟢 DEBUG: Ítems agrupados → {list(items_by_code.keys())}")
+    promo = load_promo(promo_name)
+    combo_promo = load_promo(combo_promo_name)
 
-    # --- 3) Ejecutar lógica específica de la promoción ---
-    frappe.msgprint("🔵 DEBUG: Calculando descuento con dispatch_promotion_logic()...")
+    discount = calculate_discount(promo, items_by_code)
+    combo_discount = calculate_discount(combo_promo, items_by_code)
+
+    total_discount = discount + combo_discount
+
+    if total_discount <= 0:
+        return
+
+    apply_document_discount(doc, total_discount)
+
+    annotate_promo_applied(doc, promo)
+    annotate_combo_promo_applied(doc, combo_promo)
+
+
+def safe_get(doc, fieldname):
+    """Safely get a field from doc."""
+    return getattr(doc, fieldname, None)
+
+
+def load_promo(promo_name):
+    """Safely load Park Promotion doc if exists."""
+    if not promo_name:
+        return None
+    try:
+        return frappe.get_doc("Park Promotion", promo_name)
+    except frappe.DoesNotExistError:
+        return None
+
+
+def calculate_discount(promo, items_by_code):
+    """Return discount for one promotion. If no promo → 0."""
+    if not promo:
+        return 0
     discount = dispatch_promotion_logic(promo, items_by_code)
+    return discount or 0
 
-    frappe.msgprint(f"🟣 DEBUG: Resultado del descuento calculado = {discount}")
 
-    # --- 4) Si no hay descuento ---
-    if not discount or discount <= 0:
-        frappe.msgprint("🟡 DEBUG: El descuento calculado es 0 o inválido → limpiar promoción")
-        if hasattr(doc, "custom_promotion_name"):
-            doc.custom_promotion_name = ""
-        doc.apply_discount_on = "Grand Total"
-        doc.additional_discount_percentage = 0
-        doc.discount_amount = 0
+def reset_discount_fields(doc):
+    """
+    Reset discount values before recalculating.
+    Does NOT clear promo selection fields.
+    """
+    doc.apply_discount_on = "Grand Total"
+    doc.additional_discount_percentage = 0
+    doc.discount_amount = 0
+
+
+def annotate_promo_applied(doc, promo):
+    """Write promo normal applied into output field."""
+    if not promo:
         return
+    if hasattr(doc, "custom_selected_promotion"):
+        doc.custom_selected_promotion = promo.promotion_name or promo.name
 
-    # --- 5) Aplicar descuento al documento ---
-    frappe.msgprint(f"🟢 DEBUG: Aplicando descuento final = {discount}")
-    apply_document_discount(doc, discount)
 
-    # --- 6) Anotar la promoción ---
-    frappe.msgprint("🔵 DEBUG: Guardando nombre de promoción en Promo Seleccionada")
-    set_promotion_annotation(doc, promo)
-
-    frappe.msgprint("✅ DEBUG: Promoción aplicada correctamente")
+def annotate_combo_promo_applied(doc, promo):
+    """Write combo promo applied into output field."""
+    if not promo:
+        return
+    if hasattr(doc, "custom_combo_selected_promotion"):
+        doc.custom_combo_selected_promotion = promo.promotion_name or promo.name
 
 
 def group_items_by_code(doc):
-    """
-    Agrupa los ítems del documento por item_code.
-    """
-    frappe.msgprint("🔵 DEBUG: Entrando a group_items_by_code()")
-
+    """Same as original grouping logic."""
     grouped = {}
     for row in getattr(doc, "items", []):
         if row.item_code:
             grouped.setdefault(row.item_code, []).append(row)
-
-    frappe.msgprint(f"🟢 DEBUG: Ítems detectados → {list(grouped.keys())}")
-
     return grouped
 
 
 def dispatch_promotion_logic(promo, items_by_code):
-    frappe.msgprint(f"🔵 DEBUG: Entrando a dispatch_promotion_logic() con tipo={promo.apply_type}")
+    """Same dispatch logic as original."""
+    if not promo:
+        return 0
 
     promo_type = promo.apply_type
 
     if promo_type == "requeridos x gratuitos":
-        frappe.msgprint("🟣 DEBUG: Ejecutando regla requeridos_x_gratuitos")
         return apply_required_x_free(promo, items_by_code)
 
     if promo_type == "precio fijo":
-        frappe.msgprint("🟣 DEBUG: Ejecutando regla fixed_price")
         return apply_fixed_price(promo, items_by_code)
 
     if promo_type == "porcentaje":
-        frappe.msgprint("🟣 DEBUG: Ejecutando regla percentage")
         return apply_percentage_discount(promo, items_by_code)
 
     if promo_type == "precio de descuento":
-        frappe.msgprint("🟣 DEBUG: Ejecutando regla discount_amount")
         return apply_discount_amount(promo, items_by_code)
 
-    frappe.msgprint("🔴 ERROR: Tipo de promoción DESCONOCIDO, devolviendo 0")
     return 0
 
 
 def get_applicable_promotions(doc):
-    """
-    Lista promociones activas y vigentes. No se modifica.
-    """
+    """Unchanged."""
     doc_date = (
         getattr(doc, "transaction_date", None)
         or getattr(doc, "posting_date", None)
@@ -133,16 +145,11 @@ def get_applicable_promotions(doc):
 
 
 def apply_document_discount(doc, discount_amount):
-    """
-    Aplica descuento a nivel Grand Total y fuerza recalculación para que ERPNext
-    no sobreescriba el valor en el primer save.
-    """
-
+    """Unchanged ERPNext behavior."""
     doc.apply_discount_on = "Grand Total"
     doc.additional_discount_percentage = 0
     doc.discount_amount = discount_amount
 
-    # 🚀 Force ERPNext to recalculate totals NOW
     try:
         doc.run_method("apply_discount")
     except Exception:
@@ -152,15 +159,3 @@ def apply_document_discount(doc, discount_amount):
         doc.run_method("calculate_taxes_and_totals")
     except Exception:
         pass
-
-
-
-def set_promotion_annotation(doc, promo):
-    """
-    Guarda el nombre de la promo aplicada.
-    """
-    frappe.msgprint(f"🔵 DEBUG: set_promotion_annotation() con promo={promo.promotion_name}")
-
-    if hasattr(doc, "custom_promotion_name"):
-        doc.custom_selected_promotion = promo.promotion_name or promo.name
-        frappe.msgprint(f"🟢 DEBUG: custom_promotion_name → {doc.custom_promotion_name}")
