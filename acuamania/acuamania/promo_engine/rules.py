@@ -1,6 +1,3 @@
-import frappe
-
-
 def resolve_applicable_item_codes(promo, items_by_code):
     """
     Determina qué item_codes son elegibles para la promoción:
@@ -28,12 +25,8 @@ def apply_required_x_free(promo, items_by_code):
     - El valor gratis siempre es el ítem de menor rate entre todos los aplicables.
     """
 
-    frappe.msgprint("🔵 DEBUG: Entrando a apply_required_x_free()")
-
     required = promo.required
     free = promo.free
-
-    frappe.msgprint(f"🔵 DEBUG: required={required}, free={free}")
 
     if not required or required <= 0:
         return 0
@@ -41,9 +34,7 @@ def apply_required_x_free(promo, items_by_code):
         return 0
 
     applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
-    frappe.msgprint(f"🔵 DEBUG: applicable_codes = {applicable_codes}")
 
-    # 1) Sumar cantidades TOTAL entre todos los códigos
     total_qty = 0
     all_rates = []
 
@@ -55,41 +46,23 @@ def apply_required_x_free(promo, items_by_code):
             total_qty += qty
             all_rates.append(rate)
 
-    frappe.msgprint(f"🔵 DEBUG: total_qty sumado entre todos los ítems = {total_qty}")
-    frappe.msgprint(f"🔵 DEBUG: all_rates = {all_rates}")
 
     if total_qty < required:
-        frappe.msgprint("🟡 DEBUG: total_qty < required → no aplica")
         return 0
 
-    # 2) Calcular grupos
     groups = total_qty // required
     free_units = groups * free
 
-    frappe.msgprint(f"🔵 DEBUG: groups={groups}, free_units={free_units}")
-
     if free_units <= 0:
-        frappe.msgprint("🟡 DEBUG: free_units <= 0 → no descuento")
         return 0
 
-    # 3) Encontrar la entrada más barata
     min_rate = min(all_rates) if all_rates else 0
 
-    frappe.msgprint(f"🔵 DEBUG: min_rate entre TODOS los ítems aplicables = {min_rate}")
-
     if min_rate <= 0:
-        frappe.msgprint("🟡 DEBUG: min_rate <= 0 → no descuento")
         return 0
 
-    # 4) Calcular descuento total
     total_discount = min_rate * free_units
 
-    frappe.msgprint(
-        f"🟣 DEBUG: total_discount = min_rate({min_rate}) * free_units({free_units}) "
-        f"= {total_discount}"
-    )
-
-    frappe.msgprint(f"✅ DEBUG: total_discount FINAL = {total_discount}")
     return total_discount
 
 

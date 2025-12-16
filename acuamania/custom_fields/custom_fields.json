@@ -157,6 +157,39 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "custom_people_section",
+      "label": "Personas del Grupo",
+      "fieldtype": "Section Break",
+      "insert_after": "is_corpo"
+    },
+    {
+      "fieldname": "custom_total_adults",
+      "label": "Total Adultos",
+      "fieldtype": "Int",
+      "default": 0,
+      "insert_after": "custom_people_section"
+    },
+    {
+      "fieldname": "custom_people_col_break",
+      "fieldtype": "Column Break",
+      "insert_after": "custom_total_adults"
+    },
+    {
+      "fieldname": "custom_total_children",
+      "label": "Total Niños",
+      "fieldtype": "Int",
+      "default": 0,
+      "insert_after": "custom_people_col_break"
+    },
+    {
+      "fieldname": "custom_total_people",
+      "label": "Total Personas",
+      "fieldtype": "Int",
+      "read_only": 1,
+      "default": 0,
+      "insert_after": "custom_total_children"
     }
   ],
 
@@ -192,6 +225,39 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "custom_people_section",
+      "label": "Personas del Grupo",
+      "fieldtype": "Section Break",
+      "insert_after": "is_corpo"
+    },
+    {
+      "fieldname": "custom_total_adults",
+      "label": "Total Adultos",
+      "fieldtype": "Int",
+      "default": 0,
+      "insert_after": "custom_people_section"
+    },
+    {
+      "fieldname": "custom_people_col_break",
+      "fieldtype": "Column Break",
+      "insert_after": "custom_total_adults"
+    },
+    {
+      "fieldname": "custom_total_children",
+      "label": "Total Niños",
+      "fieldtype": "Int",
+      "default": 0,
+      "insert_after": "custom_people_col_break"
+    },
+    {
+      "fieldname": "custom_total_people",
+      "label": "Total Personas",
+      "fieldtype": "Int",
+      "read_only": 1,
+      "default": 0,
+      "insert_after": "custom_total_children"
     }
   ],
 
