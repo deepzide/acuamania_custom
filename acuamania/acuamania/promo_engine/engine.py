@@ -23,6 +23,7 @@ def apply_selected_promotion(doc, method=None):
     """
 
     reset_discount_fields(doc)
+    ensure_totals_are_initialized(doc)
 
     items_by_code = group_items_by_code(doc)
     if not items_by_code:
@@ -44,6 +45,17 @@ def apply_selected_promotion(doc, method=None):
         return
 
     apply_document_discount(doc, total_discount)
+
+
+def ensure_totals_are_initialized(doc):
+    """
+    Ensures grand_total and related fields exist before
+    ERPNext payment schedule validation runs.
+    """
+    try:
+        doc.run_method("calculate_taxes_and_totals")
+    except Exception:
+        pass
 
 
 def ensure_group_promotion_if_applicable(doc):
@@ -88,11 +100,8 @@ def get_total_qty_for_item_group(doc, item_group_name):
 
     total = 0
     for row in getattr(doc, "items", []) or []:
-        if not row.item_code:
-            continue
-        if row.item_code not in item_codes:
-            continue
-        total += float(row.qty or 0)
+        if row.item_code in item_codes:
+            total += float(row.qty or 0)
 
     return total
 
@@ -101,7 +110,9 @@ def get_item_group_tree_names(root_group_name):
     """
     Returns root + descendants using nested set (lft/rgt).
     """
-    bounds = frappe.db.get_value("Item Group", root_group_name, ["lft", "rgt"], as_dict=True)
+    bounds = frappe.db.get_value(
+        "Item Group", root_group_name, ["lft", "rgt"], as_dict=True
+    )
     if not bounds:
         return []
 
@@ -123,12 +134,14 @@ def get_item_codes_by_item_groups(item_group_names):
     if not item_group_names:
         return set()
 
-    item_codes = frappe.get_all(
-        "Item",
-        filters={"item_group": ["in", item_group_names]},
-        pluck="name",
+    return set(
+        frappe.get_all(
+            "Item",
+            filters={"item_group": ["in", item_group_names]},
+            pluck="name",
+        )
+        or []
     )
-    return set(item_codes or [])
 
 
 def get_active_promotion_name_by_label(promotion_label):
@@ -173,10 +186,6 @@ def process_single_promotion_row(row, items_by_code):
     row.discount = discount
 
 
-def safe_get(doc, fieldname):
-    return getattr(doc, fieldname, None)
-
-
 def load_promo(promo_name):
     if not promo_name:
         return None
@@ -189,8 +198,7 @@ def load_promo(promo_name):
 def calculate_discount(promo, items_by_code):
     if not promo:
         return 0
-    discount = dispatch_promotion_logic(promo, items_by_code)
-    return discount or 0
+    return dispatch_promotion_logic(promo, items_by_code) or 0
 
 
 def reset_discount_fields(doc):
@@ -208,9 +216,6 @@ def group_items_by_code(doc):
 
 
 def dispatch_promotion_logic(promo, items_by_code):
-    if not promo:
-        return 0
-
     promo_type = promo.apply_type
 
     if promo_type == "requeridos x gratuitos":

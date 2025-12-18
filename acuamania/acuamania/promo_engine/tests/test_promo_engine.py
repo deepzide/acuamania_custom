@@ -5,7 +5,7 @@ from frappe.tests.utils import FrappeTestCase
 
 def create_test_customer():
     customer = frappe.new_doc("Customer")
-    customer.customer_name = "Test Promo Customer"
+    customer.customer_name = f"Test Promo Customer {frappe.generate_hash(length=6)}"
     customer.customer_group = "All Customer Groups"
     customer.save(ignore_permissions=True)
     return customer.name
@@ -34,39 +34,49 @@ def create_document_with_item(doctype, item_code, qty, rate=None):
     return doc
 
 
+def add_promotion(doc, promo_name):
+    doc.append(
+        "custom_promotion_table",
+        {
+            "promotion": promo_name,
+        },
+    )
+
+
 class TestPromoEngine(FrappeTestCase):
 
     def run_promo_test(self, doctype, promo_name, qty, rate, expected):
-        print(f"▶️ Running promo test for {doctype} using promo '{promo_name}'")
-
         doc = create_document_with_item(doctype, "ENTR-GRAL", qty=qty, rate=rate)
-        doc.custom_promotion_name = promo_name
+        add_promotion(doc, promo_name)
 
         doc.save()
 
-        print(f"🔍 discount={doc.discount_amount}, expected={expected}")
-        self.assertEqual(doc.discount_amount, expected)
-
-        return doc.discount_amount
+        self.assertEqual(
+            doc.discount_amount,
+            expected,
+            f"{doctype} promo '{promo_name}' failed",
+        )
 
     # ------------------------------------------------------
-    # 🆕 NEW TEST: combinar entradas y regalar la más barata
+    # REQUIRED x FREE – mixed items, cheapest wins
     # ------------------------------------------------------
 
     def test_mixed_items_required_free(self):
         """
-        Promo: required=4, free=1
-        Ítems: 2 ENTR-GRAL @ 910 + 2 ENTR-NIÑO @ 610
-        Resultado esperado: se regala la entrada más barata → 610
+        required=4, free=1
+        Items:
+        - 2 × 910
+        - 2 × 610
+        → free = 610
         """
-
         doc = create_document_with_item("Quotation", "ENTR-GRAL", qty=2, rate=910)
+
         child = doc.append("items", {})
         child.item_code = "ENTR-NIÑO"
         child.qty = 2
         child.rate = 610
 
-        doc.custom_promotion_name = "4x1"  # nombre de tu promo real
+        add_promotion(doc, "4x1")
         doc.save()
 
         self.assertEqual(doc.discount_amount, 610)
@@ -81,13 +91,41 @@ class TestPromoEngine(FrappeTestCase):
         child.delivery_date = doc.delivery_date
         child.schedule_date = doc.delivery_date
 
-        doc.custom_promotion_name = "4x1"
+        add_promotion(doc, "4x1")
         doc.save()
 
         self.assertEqual(doc.discount_amount, 610)
 
+
+# def test_required_free_uses_multiple_cheapest_units(self):
+#     self.ensure_required_x_free_promo("8x2", required=8, free=2)
+
+#     doc = create_document_with_item("Quotation", "ENTR-GRAL", qty=3, rate=910)
+#     ...
+#     add_promotion(doc, "8x2")
+#     doc.save()
+
+#     self.assertEqual(doc.discount_amount, 400)
+
+
+    def ensure_required_x_free_promo(self, name, required, free):
+        if frappe.db.exists("Park Promotion", name):
+            return
+
+        promo = frappe.get_doc({
+            "doctype": "Park Promotion",
+            "promotion_name": name,
+            "apply_type": "requeridos x gratuitos",
+            "required": required,
+            "free": free,
+            "active": 1,
+            "valid_from": "2000-01-01",
+            "valid_upto": "2099-12-31",
+        })
+        promo.insert(ignore_permissions=True)
+
     # ------------------------------------------------------
-    # TUS TESTS ORIGINALES (NO TOCADOS)
+    # ORIGINAL TESTS – Quotation
     # ------------------------------------------------------
 
     def test_requeridos_x_gratuitos_even(self):
@@ -96,7 +134,7 @@ class TestPromoEngine(FrappeTestCase):
             "ONFI 2x1",
             qty=4,
             rate=910,
-            expected=1820
+            expected=1820,
         )
 
     def test_requeridos_x_gratuitos_odd(self):
@@ -105,7 +143,7 @@ class TestPromoEngine(FrappeTestCase):
             "ONFI 2x1",
             qty=3,
             rate=910,
-            expected=910
+            expected=910,
         )
 
     def test_fixed_price(self):
@@ -115,7 +153,7 @@ class TestPromoEngine(FrappeTestCase):
             "Reencuentro - Todos Somos Residentes",
             qty=2,
             rate=910,
-            expected=expected
+            expected=expected,
         )
 
     def test_percentage_discount(self):
@@ -124,7 +162,7 @@ class TestPromoEngine(FrappeTestCase):
             "Descuento 10%",
             qty=2,
             rate=1000,
-            expected=200
+            expected=200,
         )
 
     def test_discount_amount(self):
@@ -133,18 +171,24 @@ class TestPromoEngine(FrappeTestCase):
             "Descuento Fijo 500 UYU",
             qty=2,
             rate=900,
-            expected=500
+            expected=500,
         )
 
     def test_no_promotion_selected(self):
+        """
+        If no promotion is selected, discount_amount must be 0.
+        Discounts are owned exclusively by the promotion engine.
+        """
         doc = create_document_with_item("Quotation", "ENTR-GRAL", qty=2, rate=900)
         doc.discount_amount = 123
-        doc.save()
-        self.assertEqual(doc.discount_amount, 123)
 
-    # ----------------------------------------
-    # SALES ORDER – test suite original
-    # ----------------------------------------
+        doc.save()
+
+        self.assertEqual(doc.discount_amount, 0)
+
+    # ------------------------------------------------------
+    # SALES ORDER – original suite
+    # ------------------------------------------------------
 
     def test_so_requeridos_x_gratuitos_even(self):
         self.run_promo_test(
@@ -152,7 +196,7 @@ class TestPromoEngine(FrappeTestCase):
             "ONFI 2x1",
             qty=4,
             rate=910,
-            expected=1820
+            expected=1820,
         )
 
     def test_so_requeridos_x_gratuitos_odd(self):
@@ -161,7 +205,7 @@ class TestPromoEngine(FrappeTestCase):
             "ONFI 2x1",
             qty=3,
             rate=910,
-            expected=910
+            expected=910,
         )
 
     def test_so_fixed_price(self):
@@ -171,7 +215,7 @@ class TestPromoEngine(FrappeTestCase):
             "Reencuentro - Todos Somos Residentes",
             qty=2,
             rate=910,
-            expected=expected
+            expected=expected,
         )
 
     def test_so_percentage_discount(self):
@@ -180,7 +224,7 @@ class TestPromoEngine(FrappeTestCase):
             "Descuento 10%",
             qty=2,
             rate=1000,
-            expected=200
+            expected=200,
         )
 
     def test_so_discount_amount(self):
@@ -189,11 +233,17 @@ class TestPromoEngine(FrappeTestCase):
             "Descuento Fijo 500 UYU",
             qty=2,
             rate=900,
-            expected=500
+            expected=500,
         )
 
     def test_so_no_promotion_selected(self):
+        """
+        If no promotion is selected, discount_amount must be 0.
+        Discounts are owned exclusively by the promotion engine.
+        """
         doc = create_document_with_item("Sales Order", "ENTR-GRAL", qty=2, rate=900)
         doc.discount_amount = 123
+
         doc.save()
-        self.assertEqual(doc.discount_amount, 123)
+
+        self.assertEqual(doc.discount_amount, 0)

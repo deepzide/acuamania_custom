@@ -18,52 +18,59 @@ def resolve_applicable_item_codes(promo, items_by_code):
 
 def apply_required_x_free(promo, items_by_code):
     """
-    Nueva lógica:
-    - Sumar cantidades de TODOS los item_codes aplicables.
-    - Determinar cuántos grupos (required) entran.
-    - free_units = groups * free
-    - El valor gratis siempre es el ítem de menor rate entre todos los aplicables.
+    Applies a 'required x free' promotion.
+    The cheapest units win, quantity-aware.
     """
-
-    required = promo.required
-    free = promo.free
-
-    if not required or required <= 0:
-        return 0
-    if free is None or free < 0:
+    required_qty, free_qty = _get_required_and_free_qty(promo)
+    if not _is_valid_required_free(required_qty, free_qty):
         return 0
 
-    applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
-
-    total_qty = 0
-    all_rates = []
-
-    for code in applicable_codes:
-        rows = items_by_code.get(code, [])
-        for row in rows:
-            qty = row.qty or 0
-            rate = row.rate or 0
-            total_qty += qty
-            all_rates.append(rate)
-
-
-    if total_qty < required:
-        return 0
-
-    groups = total_qty // required
-    free_units = groups * free
-
+    unit_prices = _extract_unit_prices(items_by_code)
+    free_units = _calculate_free_units(len(unit_prices), required_qty, free_qty)
     if free_units <= 0:
         return 0
 
-    min_rate = min(all_rates) if all_rates else 0
+    return _sum_cheapest_units(unit_prices, free_units)
 
-    if min_rate <= 0:
+
+def _get_required_and_free_qty(promo):
+    return int(promo.required or 0), int(promo.free or 0)
+
+
+def _is_valid_required_free(required_qty, free_qty):
+    return required_qty > 0 and free_qty > 0
+
+
+def _extract_unit_prices(items_by_code):
+    """
+    Flattens all item rows into individual unit prices, quantity-aware.
+    """
+    unit_prices = []
+
+    for rows in items_by_code.values():
+        for row in rows:
+            qty = int(row.qty or 0)
+            rate = float(row.rate or 0)
+
+            if qty <= 0 or rate <= 0:
+                continue
+
+            unit_prices.extend([rate] * qty)
+
+    return unit_prices
+
+
+def _calculate_free_units(total_units, required_qty, free_qty):
+    if total_units < required_qty:
         return 0
 
-    total_discount = min_rate * free_units
+    return (total_units // required_qty) * free_qty
 
-    return total_discount
+
+def _sum_cheapest_units(unit_prices, free_units):
+    unit_prices.sort()
+    return sum(unit_prices[:free_units])
+
 
 
 def apply_fixed_price(promo, items_by_code):

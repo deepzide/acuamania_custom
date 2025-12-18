@@ -1,4 +1,5 @@
 import frappe
+from frappe.utils import today
 from frappe.tests.utils import FrappeTestCase
 
 
@@ -32,8 +33,17 @@ class TestConversionEndpoints(FrappeTestCase):
             self.opportunity,
             self.lead,
         ]:
-            if doc:
-                frappe.delete_doc_if_exists(doc.doctype, doc.name, force=True)
+            if not doc:
+                continue
+
+            try:
+                doc.reload()
+                if hasattr(doc, "docstatus") and doc.docstatus == 1:
+                    doc.cancel()
+            except Exception:
+                pass
+
+            frappe.delete_doc_if_exists(doc.doctype, doc.name, force=True)
 
         frappe.db.commit()
 
@@ -50,6 +60,9 @@ class TestConversionEndpoints(FrappeTestCase):
         Lead → Opportunity → Quotation → Sales Order
         """
 
+        # --------------------------------------------------
+        # Lead → Opportunity
+        # --------------------------------------------------
         opportunity_name = frappe.call(
             "acuamania.acuamania.api.conversions.make_opportunity_and_insert",
             source_name=self.lead.name,
@@ -60,6 +73,19 @@ class TestConversionEndpoints(FrappeTestCase):
         self.assertEqual(self.opportunity.opportunity_from, "Lead")
         self.assertEqual(self.opportunity.party_name, self.lead.name)
 
+        # --------------------------------------------------
+        # ✅ ADD ITEMS TO OPPORTUNITY
+        # --------------------------------------------------
+        item = self.opportunity.append("items", {})
+        item.item_code = "ENTR-GRAL"
+        item.qty = 2
+        item.rate = 1000
+
+        self.opportunity.save(ignore_permissions=True)
+
+        # --------------------------------------------------
+        # Opportunity → Quotation
+        # --------------------------------------------------
         quotation_name = frappe.call(
             "acuamania.acuamania.api.conversions.make_quotation_and_insert",
             source_name=self.opportunity.name,
@@ -68,11 +94,26 @@ class TestConversionEndpoints(FrappeTestCase):
         self.quotation = frappe.get_doc("Quotation", quotation_name)
 
         self.assertEqual(self.quotation.opportunity, self.opportunity.name)
+        self.assertTrue(self.quotation.items)
 
-        self.sales_order = frappe.get_doc({
-            "doctype": "Sales Order",
-        })
+        # --------------------------------------------------
+        # ✅ SET DELIVERY DATE (REQUIRED FOR SALES ORDER)
+        # --------------------------------------------------
+        self.quotation.delivery_date = today()
+        for row in self.quotation.items:
+            row.delivery_date = today()
+            row.schedule_date = today()
 
+        self.quotation.save(ignore_permissions=True)
+
+        # --------------------------------------------------
+        # ✅ SUBMIT QUOTATION (ERPNext REQUIREMENT)
+        # --------------------------------------------------
+        self.quotation.submit()
+
+        # --------------------------------------------------
+        # Quotation → Sales Order
+        # --------------------------------------------------
         sales_order_name = frappe.call(
             "acuamania.acuamania.api.conversions.make_sales_order_and_insert",
             source_name=self.quotation.name,
@@ -81,3 +122,7 @@ class TestConversionEndpoints(FrappeTestCase):
         self.sales_order = frappe.get_doc("Sales Order", sales_order_name)
 
         self.assertEqual(self.sales_order.quotation, self.quotation.name)
+        self.assertTrue(self.sales_order.items)
+        self.assertTrue(self.sales_order.delivery_date or any(
+            row.delivery_date for row in self.sales_order.items
+        ))
