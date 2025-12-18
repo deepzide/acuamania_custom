@@ -105,6 +105,7 @@
       "fieldname": "custom_person_qty",
       "label": "Cantidad de Personas",
       "fieldtype": "Int",
+      "default": 1,
       "insert_after": "custom_customer_category"
     }
   ],
@@ -128,6 +129,13 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "custom_person_qty",
+      "label": "Cantidad de Personas",
+      "fieldtype": "Int",
+      "default": 1,
+      "insert_after": "custom_customer_category"
     }
   ],
 
@@ -190,6 +198,13 @@
       "read_only": 1,
       "default": 0,
       "insert_after": "custom_total_children"
+    },
+    {
+      "fieldname": "custom_person_qty",
+      "label": "Cantidad de Personas",
+      "fieldtype": "Int",
+      "default": 1,
+      "insert_after": "custom_customer_category"
     }
   ],
 
@@ -258,6 +273,13 @@
       "read_only": 1,
       "default": 0,
       "insert_after": "custom_total_children"
+    },
+    {
+      "fieldname": "custom_person_qty",
+      "label": "Cantidad de Personas",
+      "fieldtype": "Int",
+      "default": 1,
+      "insert_after": "custom_customer_category"
     }
   ],
 
@@ -280,8 +302,16 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "custom_person_qty",
+      "label": "Cantidad de Personas",
+      "fieldtype": "Int",
+      "default": 1,
+      "insert_after": "custom_customer_category"
     }
   ],
+
   "Item": [
     {
       "fieldname": "custom_age_group",
@@ -291,6 +321,7 @@
       "insert_after": "item_group"
     }
   ],
+
   "Territory": [
     {
       "fieldname": "custom_is_resident",
