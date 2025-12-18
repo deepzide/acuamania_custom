@@ -131,20 +131,25 @@ def _create_new_contact(doc, phone):
 def _link_contact_to_lead(doc, contact):
     """
     Ensures bidirectional linking safely and atomically.
-    Only updates if necessary.
+    Updates the database directly to avoid triggering validations or hooks.
     """
     logger = get_logger()
     lead_name = doc.name
     current = getattr(doc, CUSTOM_CONTACT_LINK_FIELD, None)
 
-    logger.info(f"🔗 Linking Lead '{lead_name}' to Contact '{contact.name}' (current={current})")
+    logger.info(
+        f"🔗 Linking Lead '{lead_name}' to Contact '{contact.name}' (current={current})"
+    )
 
     if current == contact.name:
         logger.debug("Link already exists, skipping.")
         return
 
-    setattr(doc, CUSTOM_CONTACT_LINK_FIELD, contact.name)
-    doc.save(ignore_permissions=True)
+    doc.db_set(
+        CUSTOM_CONTACT_LINK_FIELD,
+        contact.name,
+        update_modified=False,
+    )
 
     logger.info(f"✅ Contact '{contact.name}' linked to Lead '{lead_name}'")
 

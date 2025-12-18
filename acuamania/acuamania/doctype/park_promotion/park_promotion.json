@@ -54,27 +54,9 @@
    "options": "\nrequeridos x gratuitos\nporcentaje\nprecio de descuento\nprecio fijo"
   },
   {
-   "fieldname": "apply_on_age_group",
-   "fieldtype": "Select",
-   "label": "Aplicar en Grupo de Edad",
-   "options": "\nNi\u00f1o\nAdulto\nAmbos"
-  },
-  {
-   "fieldname": "apply_to_item_group",
-   "fieldtype": "Link",
-   "label": "Aplicar a Grupo de Items",
-   "options": "Item Group"
-  },
-  {
    "fieldname": "min_qty_required",
    "fieldtype": "Int",
    "label": "Cantidad M\u00ednima Requerida"
-  },
-  {
-   "default": "0",
-   "fieldname": "only_even_quantities",
-   "fieldtype": "Check",
-   "label": "Solo a cantidades pares"
   },
   {
    "fieldname": "fixed_price",
