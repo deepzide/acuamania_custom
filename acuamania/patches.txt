@@ -14,4 +14,4 @@ acuamania.patches.load_customer_categories 3.65
 acuamania.patches.load_territories 5.6
 
 # Add custom fields to core doctypes patches
-acuamania.patches.add_custom_fields 9.3
+acuamania.patches.add_custom_fields 9.5
