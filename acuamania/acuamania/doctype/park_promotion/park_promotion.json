@@ -82,6 +82,12 @@
    "fieldtype": "Section Break"
   },
   {
+   "fieldname": "applicable_categories",
+   "fieldtype": "Table MultiSelect",
+   "label": "Categorías Aplicables",
+   "options": "Applicable Categories"
+  },  
+  {
    "fieldname": "park_promotion_items",
    "fieldtype": "Table",
    "label": "Productos",

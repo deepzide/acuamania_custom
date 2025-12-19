@@ -10,18 +10,23 @@ from acuamania.acuamania.promo_engine.rules import (
 GROUP_PROMO_LABEL = "Descuento de Grupo"
 ENTRADA_ITEM_GROUP = "Entrada"
 GROUP_PROMO_MIN_QTY_EXCLUSIVE = 15
+ITEM_CATEGORY_FIELD = "item_group"
 
 
 def apply_selected_promotion(doc, method=None):
     """
     Called on Quotation/Sales Order validate/before_save.
+
     Supports ANY number of promotions via child table:
         doc.custom_promotion_table
 
     Auto-injects 'Descuento de Grupo' when total qty of items in 'Entrada'
     item group (including its descendants) is > 15, only if promo is active.
-    """
 
+    Promotion applicability uses OR logic:
+        - Explicit products (park_promotion_items)
+        - Item category in promo.applicable_categories (Table MultiSelect)
+    """
     reset_discount_fields(doc)
     ensure_totals_are_initialized(doc)
 
@@ -49,8 +54,7 @@ def apply_selected_promotion(doc, method=None):
 
 def ensure_totals_are_initialized(doc):
     """
-    Ensures grand_total and related fields exist before
-    ERPNext payment schedule validation runs.
+    Ensures totals exist before ERPNext validations run.
     """
     try:
         doc.run_method("calculate_taxes_and_totals")
@@ -172,6 +176,7 @@ def process_single_promotion_row(row, items_by_code):
     """
     Processes one promotion row:
         - Loads Park Promotion
+        - Resolves applicable items (product OR category)
         - Calculates discount
         - Saves applied name + discount into the row
     """
@@ -181,7 +186,20 @@ def process_single_promotion_row(row, items_by_code):
         row.discount = 0
         return
 
-    discount = calculate_discount(promo, items_by_code)
+    applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
+    if not applicable_codes:
+        row.applied_name = promo.promotion_name or promo.name
+        row.discount = 0
+        return
+
+    scoped_items = {
+        code: rows
+        for code, rows in items_by_code.items()
+        if code in applicable_codes
+    }
+
+    discount = calculate_discount(promo, scoped_items)
+
     row.applied_name = promo.promotion_name or promo.name
     row.discount = discount
 
@@ -259,10 +277,59 @@ def apply_document_discount(doc, discount_amount):
 
     try:
         doc.run_method("apply_discount")
-    except Exception:
-        pass
-
-    try:
         doc.run_method("calculate_taxes_and_totals")
     except Exception:
         pass
+
+
+def get_promo_applicable_categories(promo):
+    """
+    Extracts category values from a Table MultiSelect field
+    on Park Promotion.
+    """
+    categories = set()
+
+    for row in getattr(promo, "applicable_categories", []) or []:
+        category = getattr(row, "category", None)
+        if category:
+            categories.add(category)
+
+    return categories
+
+
+def resolve_applicable_item_codes(promo, items_by_code):
+    """
+    Determines which item_codes are eligible for a promotion.
+
+    OR logic:
+    - Explicit products in park_promotion_items
+    - Item category matches promo.applicable_categories
+    """
+    explicit_products = {
+        row.product
+        for row in getattr(promo, "park_promotion_items", []) or []
+        if getattr(row, "product", None)
+    }
+
+    promo_categories = get_promo_applicable_categories(promo)
+
+    if not explicit_products and not promo_categories:
+        return set(items_by_code.keys())
+
+    eligible_codes = set()
+
+    for item_code in items_by_code.keys():
+        if item_code in explicit_products:
+            eligible_codes.add(item_code)
+            continue
+
+        item_category = frappe.db.get_value(
+            "Item",
+            item_code,
+            ITEM_CATEGORY_FIELD,
+        )
+
+        if item_category and item_category in promo_categories:
+            eligible_codes.add(item_code)
+
+    return eligible_codes
