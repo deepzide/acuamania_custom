@@ -113,10 +113,6 @@ class TestPromoEngine(FrappeTestCase):
 		doc.save()
 		self.assertEqual(doc.discount_amount, 123)
 
-	# ----------------------------------------
-	# SALES ORDER – test suite original
-	# ----------------------------------------
-
 	def test_so_requeridos_x_gratuitos_even(self):
 		self.run_promo_test("Sales Order", "ONFI 2x1", qty=4, rate=910, expected=1820)
 

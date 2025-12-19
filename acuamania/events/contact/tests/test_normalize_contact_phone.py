@@ -47,7 +47,6 @@ class TestNormalizeContactPhone(FrappeTestCase):
 	@classmethod
 	def setUpClass(cls):
 		"""Initialize custom logger that logs to both stdout and file."""
-		site_name = frappe.local.site or frappe.get_site_path().split(os.sep)[-2]
 		log_dir = frappe.get_site_path("logs")
 		os.makedirs(log_dir, exist_ok=True)
 
@@ -98,7 +97,7 @@ class TestNormalizeContactPhone(FrappeTestCase):
 		self.logger.info(f"✅ Contact inserted: {contact.name}")
 
 		# Track created docs for cleanup
-		self._created_docs = getattr(self, "_created_docs", []) + [contact]
+		self._created_docs = [*getattr(self, "_created_docs", []), contact]
 
 		contact.reload()
 		self.logger.info(f"🔁 Reloaded Contact: phone={contact.phone}, custom_phone={contact.custom_phone}")
@@ -130,7 +129,7 @@ class TestNormalizeContactPhone(FrappeTestCase):
 		lead = frappe.get_doc(lead_data).insert(ignore_permissions=True)
 		self.logger.info(f"✅ Lead inserted: {lead.name} (phone={lead.phone})")
 
-		self._created_docs = getattr(self, "_created_docs", []) + [lead]
+		self._created_docs = [*getattr(self, "_created_docs", []), lead]
 
 		frappe.db.commit()
 		self.logger.info("💾 DB committed after Lead insertion.")

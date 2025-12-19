@@ -90,7 +90,7 @@ class TestSaveTranscriptions(FrappeTestCase):
 		# -----------------------------
 		# 5) Verify file content matches buffer
 		# -----------------------------
-		with open(physical_path, "r", encoding="utf-8") as f:
+		with open(physical_path, encoding="utf-8") as f:
 			content = f.read().strip()
 
 		self.assertEqual(content, BUFFER_TEXT, "File contents must match the original transcription buffer.")
