@@ -8,10 +8,6 @@
     site_name: frontend
     admin_password: admin  # puedes cambiarla si quieres
 
-    # ✅ Log fijo para Promtail (no se superpone porque se borra antes)
-    migrate_log_dir: "{{ project_dir }}/frappe_docker/logs"
-    migrate_log_file: "{{ migrate_log_dir }}/migrate-{{ site_name }}.log"
-
   tasks:
     # ------------------------------------------------------------------------
     # 🔍 Detectar rama actual de Git
@@ -140,7 +136,7 @@
 
     - name: Start base stack (db, redis)
       ansible.builtin.command:
-        cmd: docker compose -f pwd.yml up -d
+        cmd: docker compose -f pwd.yml up -d 
       args:
         chdir: "{{ project_dir }}/frappe_docker"
 
@@ -152,6 +148,7 @@
         done
       args:
         chdir: "{{ project_dir }}/frappe_docker"
+
 
     # ------------------------------------------------------------------------
     # ⚡ Crear sitio si no existe
@@ -184,18 +181,11 @@
         msg: "{{ create_site_output.stdout_lines | default([]) }}"
 
     # ------------------------------------------------------------------------
-    # 🔄 Migraciones y build (LOG A ARCHIVO PARA PROMTAIL)
+    # 🔄 Migraciones y build
     # ------------------------------------------------------------------------
-    - name: Ensure logs directory exists
-      ansible.builtin.file:
-        path: "{{ migrate_log_dir }}"
-        state: directory
-        mode: "0755"
-      when: site_check.rc == 0 or create_site_output.rc == 0
-
     - name: Delete previous migration log (avoid overlap)
       ansible.builtin.file:
-        path: "{{ migrate_log_file }}"
+        path: "{{ project_dir }}/frappe_docker/logs/migrate-{{ site_name }}.log"
         state: absent
       when: site_check.rc == 0 or create_site_output.rc == 0
 
@@ -204,36 +194,7 @@
         docker compose -f pwd.yml exec -T backend bench --site {{ site_name }} migrate
       args:
         chdir: "{{ project_dir }}/frappe_docker"
-      register: migrate_result
       when: site_check.rc == 0 or create_site_output.rc == 0
-
-    - name: Save migration log to file (for Promtail)
-      ansible.builtin.copy:
-        dest: "{{ migrate_log_file }}"
-        mode: "0644"
-        content: |
-          ===== MIGRATE LOG =====
-          host={{ inventory_hostname }}
-          site={{ site_name }}
-          rc={{ migrate_result.rc | default('N/A') }}
-          start={{ migrate_result.start | default('') }}
-          end={{ migrate_result.end | default('') }}
-          delta={{ migrate_result.delta | default('') }}
-
-          --- STDOUT ---
-          {{ migrate_result.stdout | default('') }}
-
-          --- STDERR ---
-          {{ migrate_result.stderr | default('') }}
-      when: migrate_result is defined
-
-    - name: Fail if migrate failed (after writing log)
-      ansible.builtin.fail:
-        msg: "Migrations failed (rc={{ migrate_result.rc }}). Log saved to {{ migrate_log_file }}"
-      when:
-        - migrate_result is defined
-        - migrate_result.rc is defined
-        - migrate_result.rc != 0
 
     - name: Rebuild assets (safe bash mode)
       ansible.builtin.shell: |
@@ -286,7 +247,6 @@
           - "✅ ERPNext desplegado correctamente"
           - "🖼️ Imagen: {{ target_image }}"
           - "📦 Apps: erpnext, {{ custom_apps | join(', ') }}"
-          - "📝 Migrate log: {{ migrate_log_file }}"
           - "🌐 http://{{ ansible_host }}:8080"
           - "👤 Administrator / 🔑 {{ admin_password }}"
           - "=========================================="
