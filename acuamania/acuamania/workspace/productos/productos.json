@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Productos",
  "links": [],
- "modified": "2025-12-09 10:04:41.922001",
+ "modified": "2025-12-19 19:44:53.542198",
  "modified_by": "Administrator",
  "module": "Acuamania",
  "name": "Productos",
@@ -29,7 +29,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 10.0,
+ "sequence_id": 11.0,
  "shortcuts": [],
  "title": "Productos"
 }
