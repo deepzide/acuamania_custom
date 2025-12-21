@@ -1,6 +1,6 @@
 {
  "charts": [],
- "content": "[{\"type\":\"header\",\"data\":{\"text\":\"Recibo de Pago\"}}]",
+ "content": "[{\"id\":\"2wc0VL2ptc\",\"type\":\"header\",\"data\":{\"text\":\"<span class=\\\"h4\\\">Recibo de Pago</span>\",\"col\":12}},{\"id\":\"e49kS8BzC7\",\"type\":\"quick_list\",\"data\":{\"quick_list_name\":\"Recibo de Pago\",\"col\":12}}]",
  "creation": "2025-12-21 00:19:17.627767",
  "custom_blocks": [],
  "docstatus": 0,
@@ -13,15 +13,21 @@
  "is_hidden": 0,
  "label": "Recibo de Pago",
  "links": [],
- "modified": "2025-12-21 00:20:30.475571",
+ "modified": "2025-12-21 00:33:38.427719",
  "modified_by": "Administrator",
  "module": "Acuamania",
  "name": "Recibo de Pago",
  "number_cards": [],
  "owner": "Administrator",
- "parent_page": "Factura de Venta",
+ "parent_page": "",
  "public": 1,
- "quick_lists": [],
+ "quick_lists": [
+  {
+   "document_type": "Payment Entry",
+   "label": "Recibo de Pago",
+   "quick_list_filter": "[]"
+  }
+ ],
  "roles": [],
  "sequence_id": 11.0,
  "shortcuts": [],
