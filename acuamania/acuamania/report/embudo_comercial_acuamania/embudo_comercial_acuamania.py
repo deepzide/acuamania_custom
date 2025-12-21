@@ -44,12 +44,36 @@ def get_data(filters):
 	data = [
 		{"metric": _("Leads"), "value": lead_count, "detalle": _("Registros en el rango de fechas filtrado")},
 		{"metric": _("Oportunidades"), "value": opp_count, "detalle": _("Oportunidades creadas desde Lead")},
-		{"metric": _("Cotizaciones"), "value": quot_count, "detalle": _("Cotizaciones de Leads (status cualquiera)")},
-		{"metric": _("Órdenes de Venta"), "value": order_count, "detalle": _("Órdenes generadas desde Cotizaciones de Leads")},
-		{"metric": _("Tasa Lead → Oportunidad"), "value": lead_to_opp, "detalle": _("Oportunidades / Leads * 100")},
-		{"metric": _("Tasa Oportunidad → Cotización"), "value": opp_to_quot, "detalle": _("Cotizaciones / Oportunidades * 100")},
-		{"metric": _("Tasa Cotización → Orden"), "value": quot_to_order, "detalle": _("Órdenes / Cotizaciones * 100")},
-		{"metric": _("Tasa global Lead → Orden"), "value": lead_to_order, "detalle": _("Órdenes / Leads * 100")},
+		{
+			"metric": _("Cotizaciones"),
+			"value": quot_count,
+			"detalle": _("Cotizaciones de Leads (status cualquiera)"),
+		},
+		{
+			"metric": _("Órdenes de Venta"),
+			"value": order_count,
+			"detalle": _("Órdenes generadas desde Cotizaciones de Leads"),
+		},
+		{
+			"metric": _("Tasa Lead → Oportunidad"),
+			"value": lead_to_opp,
+			"detalle": _("Oportunidades / Leads * 100"),
+		},
+		{
+			"metric": _("Tasa Oportunidad → Cotización"),
+			"value": opp_to_quot,
+			"detalle": _("Cotizaciones / Oportunidades * 100"),
+		},
+		{
+			"metric": _("Tasa Cotización → Orden"),
+			"value": quot_to_order,
+			"detalle": _("Órdenes / Cotizaciones * 100"),
+		},
+		{
+			"metric": _("Tasa global Lead → Orden"),
+			"value": lead_to_order,
+			"detalle": _("Órdenes / Leads * 100"),
+		},
 	]
 
 	return data, notes

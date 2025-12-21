@@ -2,4 +2,4 @@ from acuamania.events.lead.propagate_classifications import propagate_classifica
 
 
 def on_update(doc, method=None):
-    propagate_classifications(doc)
+	propagate_classifications(doc)

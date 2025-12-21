@@ -13,7 +13,7 @@
  "is_hidden": 0,
  "label": "Promos",
  "links": [],
- "modified": "2025-12-19 19:44:53.630536",
+ "modified": "2025-12-21 00:19:29.391246",
  "modified_by": "Administrator",
  "module": "Acuamania",
  "name": "Promos",
@@ -29,7 +29,7 @@
   }
  ],
  "roles": [],
- "sequence_id": 12.0,
+ "sequence_id": 13.0,
  "shortcuts": [],
  "title": "Promos"
 }

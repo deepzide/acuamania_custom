@@ -1,132 +1,131 @@
 def resolve_applicable_item_codes(promo, items_by_code):
-    """
-    Determina qué item_codes son elegibles para la promoción:
-    - Si el Park Promotion tiene filas en la tabla hija items: solo esos product.
-    - Si no, se aplica a todos los item_code del documento.
-    """
-    explicit_codes = {
-        row.product
-        for row in getattr(promo, "park_promotion_items", []) or []
-        if getattr(row, "product", None)
-    }
+	"""
+	Determina qué item_codes son elegibles para la promoción:
+	- Si el Park Promotion tiene filas en la tabla hija items: solo esos product.
+	- Si no, se aplica a todos los item_code del documento.
+	"""
+	explicit_codes = {
+		row.product
+		for row in getattr(promo, "park_promotion_items", []) or []
+		if getattr(row, "product", None)
+	}
 
-    if explicit_codes:
-        return [code for code in explicit_codes if code in items_by_code]
+	if explicit_codes:
+		return [code for code in explicit_codes if code in items_by_code]
 
-    return list(items_by_code.keys())
+	return list(items_by_code.keys())
 
 
 def apply_required_x_free(promo, items_by_code):
-    """
-    Applies a 'required x free' promotion.
-    The cheapest units win, quantity-aware.
-    """
-    required_qty, free_qty = _get_required_and_free_qty(promo)
-    if not _is_valid_required_free(required_qty, free_qty):
-        return 0
+	"""
+	Applies a 'required x free' promotion.
+	The cheapest units win, quantity-aware.
+	"""
+	required_qty, free_qty = _get_required_and_free_qty(promo)
+	if not _is_valid_required_free(required_qty, free_qty):
+		return 0
 
-    unit_prices = _extract_unit_prices(items_by_code)
-    free_units = _calculate_free_units(len(unit_prices), required_qty, free_qty)
-    if free_units <= 0:
-        return 0
+	unit_prices = _extract_unit_prices(items_by_code)
+	free_units = _calculate_free_units(len(unit_prices), required_qty, free_qty)
+	if free_units <= 0:
+		return 0
 
-    return _sum_cheapest_units(unit_prices, free_units)
+	return _sum_cheapest_units(unit_prices, free_units)
 
 
 def _get_required_and_free_qty(promo):
-    return int(promo.required or 0), int(promo.free or 0)
+	return int(promo.required or 0), int(promo.free or 0)
 
 
 def _is_valid_required_free(required_qty, free_qty):
-    return required_qty > 0 and free_qty > 0
+	return required_qty > 0 and free_qty > 0
 
 
 def _extract_unit_prices(items_by_code):
-    """
-    Flattens all item rows into individual unit prices, quantity-aware.
-    """
-    unit_prices = []
+	"""
+	Flattens all item rows into individual unit prices, quantity-aware.
+	"""
+	unit_prices = []
 
-    for rows in items_by_code.values():
-        for row in rows:
-            qty = int(row.qty or 0)
-            rate = float(row.rate or 0)
+	for rows in items_by_code.values():
+		for row in rows:
+			qty = int(row.qty or 0)
+			rate = float(row.rate or 0)
 
-            if qty <= 0 or rate <= 0:
-                continue
+			if qty <= 0 or rate <= 0:
+				continue
 
-            unit_prices.extend([rate] * qty)
+			unit_prices.extend([rate] * qty)
 
-    return unit_prices
+	return unit_prices
 
 
 def _calculate_free_units(total_units, required_qty, free_qty):
-    if total_units < required_qty:
-        return 0
+	if total_units < required_qty:
+		return 0
 
-    return (total_units // required_qty) * free_qty
+	return (total_units // required_qty) * free_qty
 
 
 def _sum_cheapest_units(unit_prices, free_units):
-    unit_prices.sort()
-    return sum(unit_prices[:free_units])
-
+	unit_prices.sort()
+	return sum(unit_prices[:free_units])
 
 
 def apply_fixed_price(promo, items_by_code):
-    if not promo.fixed_price:
-        return 0
+	if not promo.fixed_price:
+		return 0
 
-    applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
-    total_discount = 0
+	applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
+	total_discount = 0
 
-    for code in applicable_codes:
-        rows = items_by_code.get(code, [])
-        if not rows:
-            continue
+	for code in applicable_codes:
+		rows = items_by_code.get(code, [])
+		if not rows:
+			continue
 
-        for row in rows:
-            if not row.qty:
-                continue
+		for row in rows:
+			if not row.qty:
+				continue
 
-            current_rate = row.rate or 0
-            if current_rate <= promo.fixed_price:
-                continue
+			current_rate = row.rate or 0
+			if current_rate <= promo.fixed_price:
+				continue
 
-            unit_discount = current_rate - promo.fixed_price
-            total_discount += unit_discount * row.qty
+			unit_discount = current_rate - promo.fixed_price
+			total_discount += unit_discount * row.qty
 
-    return total_discount
+	return total_discount
 
 
 def apply_percentage_discount(promo, items_by_code):
-    if not promo.discount_percentage:
-        return 0
+	if not promo.discount_percentage:
+		return 0
 
-    applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
-    base_amount = 0
+	applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
+	base_amount = 0
 
-    for code in applicable_codes:
-        rows = items_by_code.get(code, [])
-        for row in rows:
-            if not row.qty or not row.rate:
-                continue
-            base_amount += row.qty * row.rate
+	for code in applicable_codes:
+		rows = items_by_code.get(code, [])
+		for row in rows:
+			if not row.qty or not row.rate:
+				continue
+			base_amount += row.qty * row.rate
 
-    if not base_amount:
-        return 0
+	if not base_amount:
+		return 0
 
-    return base_amount * (promo.discount_percentage / 100.0)
+	return base_amount * (promo.discount_percentage / 100.0)
 
 
 def apply_discount_amount(promo, items_by_code):
-    if not promo.discount_amount:
-        return 0
+	if not promo.discount_amount:
+		return 0
 
-    applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
-    has_items = any(items_by_code.get(code) for code in applicable_codes)
+	applicable_codes = resolve_applicable_item_codes(promo, items_by_code)
+	has_items = any(items_by_code.get(code) for code in applicable_codes)
 
-    if not has_items:
-        return 0
+	if not has_items:
+		return 0
 
-    return promo.discount_amount
+	return promo.discount_amount

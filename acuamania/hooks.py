@@ -7,35 +7,35 @@ app_license = "unlicense"
 
 
 fixtures = [
-    # {"dt": "Item"},
-    {"dt": "Park Promotion"},
-    {"dt": "Lead"},
-    {"dt": "Opportunity"},
-    {"dt": "Quotation"},
-    {"dt": "Sales Order"},
-    {
-        "dt": "Workspace",
-        "filters": [["name", "in", ["Acuamania Analytics"]]],
-    },
-    {
-        "dt": "Number Card",
-        "filters": [
-            [
-                "name",
-                "in",
-                [
-                    "Leads (30d)",
-                    "Oportunidades (30d)",
-                    "Cotizaciones (30d)",
-                    "Ordenes de Venta (30d)",
-                ],
-            ]
-        ],
-    },
-    {
-        "dt": "Report",
-        "filters": [["name", "in", ["Embudo Comercial Acuamania"]]],
-    },
+	# {"dt": "Item"},
+	{"dt": "Park Promotion"},
+	{"dt": "Lead"},
+	{"dt": "Opportunity"},
+	{"dt": "Quotation"},
+	{"dt": "Sales Order"},
+	{
+		"dt": "Workspace",
+		"filters": [["name", "in", ["Acuamania Analytics"]]],
+	},
+	{
+		"dt": "Number Card",
+		"filters": [
+			[
+				"name",
+				"in",
+				[
+					"Leads (30d)",
+					"Oportunidades (30d)",
+					"Cotizaciones (30d)",
+					"Ordenes de Venta (30d)",
+				],
+			]
+		],
+	},
+	{
+		"dt": "Report",
+		"filters": [["name", "in", ["Embudo Comercial Acuamania"]]],
+	},
 ]
 
 
@@ -172,25 +172,25 @@ fixtures = [
 # Hook on document methods and events
 
 doc_events = {
-    "Lead": {
-        "validate": "acuamania.validations.lead.validate_lead.validate_lead",
-        "on_update": "acuamania.events.lead.on_update.on_update",
-        "after_insert": "acuamania.events.lead.after_insert.after_insert",
-        "before_insert": "acuamania.events.lead.before_insert.before_insert",
-        "before_save": "acuamania.events.lead.before_save.before_save",
-    },
-    "Contact": {
-        "before_save": "acuamania.events.contact.before_save.before_save",
-        "on_update": "acuamania.events.contact.on_update.on_update",
-        "before_insert": "acuamania.events.contact.before_insert.before_insert",
-    },
-    "Sales Order": {
-        "before_save": "acuamania.events.sales_order.before_save.before_save",
-        "on_submit": "acuamania.events.sales_order.on_submit.on_submit",
-    },
-    "Quotation": {
-        "before_save": "acuamania.events.quotation.before_save.before_save",
-    },
+	"Lead": {
+		"validate": "acuamania.validations.lead.validate_lead.validate_lead",
+		"on_update": "acuamania.events.lead.on_update.on_update",
+		"after_insert": "acuamania.events.lead.after_insert.after_insert",
+		"before_insert": "acuamania.events.lead.before_insert.before_insert",
+		"before_save": "acuamania.events.lead.before_save.before_save",
+	},
+	"Contact": {
+		"before_save": "acuamania.events.contact.before_save.before_save",
+		"on_update": "acuamania.events.contact.on_update.on_update",
+		"before_insert": "acuamania.events.contact.before_insert.before_insert",
+	},
+	"Sales Order": {
+		"before_save": "acuamania.events.sales_order.before_save.before_save",
+		"on_submit": "acuamania.events.sales_order.on_submit.on_submit",
+	},
+	"Quotation": {
+		"before_save": "acuamania.events.quotation.before_save.before_save",
+	},
 }
 
 
@@ -201,9 +201,7 @@ scheduler_events = {
 	# "all": [
 	# 	"acuamania.tasks.all"
 	# ],
-	"daily": [
-		"acuamania.tasks.daily.save_transcriptions.save_transcriptions"
-	],
+	"daily": ["acuamania.tasks.daily.save_transcriptions.save_transcriptions"],
 	# "hourly": [
 	# 	"acuamania.tasks.hourly"
 	# ],
