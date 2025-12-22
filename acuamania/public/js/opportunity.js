@@ -6,23 +6,32 @@ frappe.ui.form.on('Opportunity Item', {
             return;
         }
 
-        fetch_item_rate_and_update_row(frm, cdt, cdn);
+        fetch_price_from_item_price(frm, cdt, cdn);
     },
 
     qty: function (frm, cdt, cdn) {
         const row = frappe.get_doc(cdt, cdn);
+        if (!row.rate || !row.qty) return;
 
-        if (!row.rate || !row.qty) {
-            return;
-        }
-
-        const amount = flt(row.rate) * flt(row.qty);
-        frappe.model.set_value(cdt, cdn, 'amount', amount);
+        frappe.model.set_value(
+            cdt,
+            cdn,
+            'amount',
+            flt(row.rate) * flt(row.qty)
+        );
     }
 });
 
-function fetch_item_rate_and_update_row(frm, cdt, cdn) {
+function fetch_price_from_item_price(frm, cdt, cdn) {
     const row = frappe.get_doc(cdt, cdn);
+
+    const price_list =
+        frm.doc.selling_price_list ||
+        frappe.defaults.get_default('selling_price_list');
+
+    if (!price_list) {
+        return;
+    }
 
     frappe.call({
         method: 'frappe.client.get_value',
@@ -30,6 +39,7 @@ function fetch_item_rate_and_update_row(frm, cdt, cdn) {
             doctype: 'Item Price',
             filters: {
                 item_code: row.item_code,
+                price_list: price_list,
                 selling: 1
             },
             fieldname: ['price_list_rate']
@@ -41,11 +51,10 @@ function fetch_item_rate_and_update_row(frm, cdt, cdn) {
 
             const rate = flt(r.message.price_list_rate);
             const qty = flt(row.qty) || 1;
-            const amount = rate * qty;
 
             frappe.model.set_value(cdt, cdn, {
                 rate: rate,
-                amount: amount
+                amount: rate * qty
             });
         }
     });
