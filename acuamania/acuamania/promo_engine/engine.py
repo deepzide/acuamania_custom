@@ -196,11 +196,11 @@ def process_single_promotion_row(row, items_by_code):
 
 	scoped_items = {code: rows for code, rows in items_by_code.items() if code in applicable_codes}
 
-	discount = calculate_discount(promo, scoped_items)
+	discount, qty = calculate_discount_and_qty(promo, scoped_items)
 
 	row.applied_name = promo.promotion_name or promo.name
 	row.discount = discount
-
+	row.qty = qty
 
 def load_promo(promo_name):
 	if not promo_name:
@@ -211,10 +211,11 @@ def load_promo(promo_name):
 		return None
 
 
-def calculate_discount(promo, items_by_code):
+def calculate_discount_and_qty(promo, items_by_code):
 	if not promo:
-		return 0
-	return dispatch_promotion_logic(promo, items_by_code) or 0
+		return 0, 0
+
+	return dispatch_promotion_logic(promo, items_by_code) or (0, 0)
 
 
 def reset_discount_fields(doc):
@@ -246,7 +247,7 @@ def dispatch_promotion_logic(promo, items_by_code):
 	if promo_type == "precio de descuento":
 		return apply_discount_amount(promo, items_by_code)
 
-	return 0
+	return 0, 0
 
 
 def get_applicable_promotions(doc):

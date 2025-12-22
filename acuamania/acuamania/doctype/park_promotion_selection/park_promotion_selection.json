@@ -7,6 +7,7 @@
  "engine": "InnoDB",
  "field_order": [
   "promotion",
+  "qty",
   "discount",
   "applied_name"
  ],
@@ -25,6 +26,13 @@
    "label": "Descuento"
   },
   {
+   "default": "0",
+   "fieldname": "qty",
+   "fieldtype": "Int",
+   "in_list_view": 1,
+   "label": "Cantidad"
+  },
+  {
    "fieldname": "applied_name",
    "fieldtype": "Data",
    "in_list_view": 1,
@@ -35,7 +43,7 @@
  "index_web_pages_for_search": 1,
  "istable": 1,
  "links": [],
- "modified": "2025-12-11 17:36:55.929516",
+ "modified": "2025-12-22 11:58:48.311432",
  "modified_by": "Administrator",
  "module": "Acuamania",
  "name": "Park Promotion Selection",
