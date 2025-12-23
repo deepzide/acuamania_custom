@@ -28,6 +28,22 @@
       "insert_after": "custom_has_hotel_voucher"
     },
     {
+      "fieldname": "custom_total_adults",
+      "label": "Total Adultos",
+      "fieldtype": "Int",
+      "default": 0,
+      "min_value": 0,
+      "insert_after": "request_type"
+    },
+    {
+      "fieldname": "custom_total_children",
+      "label": "Total Niños",
+      "fieldtype": "Int",
+      "default": 0,
+      "min_value": 0,
+      "insert_after": "custom_total_adults"
+    },
+    {
       "fieldname": "custom_contact_name",
       "label": "Nombre del Contacto",
       "fieldtype": "Link",
@@ -129,6 +145,22 @@
       "label": "Es Corporativo",
       "fieldtype": "Check",
       "insert_after": "custom_has_hotel_voucher"
+    },
+    {
+      "fieldname": "custom_total_adults",
+      "label": "Total Adultos",
+      "fieldtype": "Int",
+      "default": 0,
+      "min_value": 0,
+      "insert_after": "opportunity_owner"
+    },
+    {
+      "fieldname": "custom_total_children",
+      "label": "Total Niños",
+      "fieldtype": "Int",
+      "default": 0,
+      "min_value": 0,
+      "insert_after": "custom_total_adults"
     },
     {
       "fieldname": "custom_person_qty",
