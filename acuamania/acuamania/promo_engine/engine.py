@@ -202,6 +202,7 @@ def process_single_promotion_row(row, items_by_code):
 	row.discount = discount
 	row.qty = qty
 
+
 def load_promo(promo_name):
 	if not promo_name:
 		return None
