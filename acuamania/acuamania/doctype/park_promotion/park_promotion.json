@@ -37,6 +37,12 @@
    "fieldtype": "Check",
    "label": "Activo"
   },
+{
+   "default": "1",
+   "fieldname": "default_apply",
+   "fieldtype": "Check",
+   "label": "Aplicar por Defecto"
+  },
   {
    "fieldname": "valid_from",
    "fieldtype": "Datetime",
