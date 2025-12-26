@@ -194,9 +194,9 @@ doc_events = {
 	"Quotation": {
 		"before_save": "acuamania.events.quotation.before_save.before_save",
 	},
-	"Sales Invoice": {
-		"on_submit": "acuamania.events.sales_invoice.on_submit.on_submit",
-	},
+	# "Sales Invoice": {
+	# 	"on_submit": "acuamania.events.sales_invoice.on_submit.on_submit",
+	# },
 }
 
 

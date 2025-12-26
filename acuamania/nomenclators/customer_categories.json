@@ -3,5 +3,6 @@
   {"customer_category": "Nuevo"},
   {"customer_category": "Grupo"},
   {"customer_category": "Corporativo"},
-  {"customer_category": "Hotel"}
+  {"customer_category": "Hotel"},
+  {"customer_category": "Residente"}
 ]

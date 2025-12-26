@@ -4,7 +4,7 @@
 
 [post_model_sync]
 acuamania.patches.disable_auto_contact_creation v1.2
-acuamania.patches.hide_lead_mobile_no v1.2
+acuamania.patches.hide_fields v1.2
 acuamania.patches.load_lead_sources v1.2
 acuamania.patches.load_customer_categories v1.3
 acuamania.patches.load_territories v1.3
