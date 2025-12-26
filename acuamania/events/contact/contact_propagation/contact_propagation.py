@@ -23,6 +23,9 @@ def _sync_linked_docs(contact_doc, target_doctype, link_def):
 	if not link_value:
 		return
 
+	if target_doctype == "Lead" and getattr(frappe.flags, "skip_contact_to_lead_sync", False):
+		return
+
 	related_docs = frappe.get_all(
 		target_doctype,
 		filters={link_field: link_value, "docstatus": 0},
@@ -60,7 +63,18 @@ def _apply_field_mapping(contact_doc, target_doctype, doc_name, mapping, contact
 			updated = True
 
 	if updated:
-		doc.save(ignore_permissions=True)
+		reset_skip_flag = False
+		previous_skip_flag = getattr(frappe.flags, "skip_lead_to_contact_sync", False)
+		if target_doctype == "Lead":
+			frappe.flags.skip_lead_to_contact_sync = True
+			reset_skip_flag = True
+
+		try:
+			doc.save(ignore_permissions=True)
+		finally:
+			if reset_skip_flag:
+				frappe.flags.skip_lead_to_contact_sync = previous_skip_flag
+
 		frappe.logger("contact_sync").info(
 			f"🔄 Updated {target_doctype} {doc_name} from Contact {contact_doc.name} at {now()}"
 		)

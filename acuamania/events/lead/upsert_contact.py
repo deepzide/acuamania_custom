@@ -124,8 +124,13 @@ def _create_new_contact(doc, phone):
 	logger.info(
 		f"🆕 Creating Contact from Lead '{lead_name}' → {contact.first_name} {contact.last_name} ({phone})"
 	)
-	contact.insert(ignore_permissions=True)
-	contact.reload()
+	previous_skip = getattr(frappe.flags, "skip_contact_to_lead_sync", False)
+	frappe.flags.skip_contact_to_lead_sync = True
+	try:
+		contact.insert(ignore_permissions=True)
+		contact.reload()
+	finally:
+		frappe.flags.skip_contact_to_lead_sync = previous_skip
 
 	logger.info(MSG_NEW_CONTACT.format(name=contact.name))
 	return contact

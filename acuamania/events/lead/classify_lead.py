@@ -13,8 +13,8 @@ def classify_lead(doc):
 	"""
 	classify_customer_status(doc)
 	classify_group(doc)
-	classify_corporate(doc)
-	classify_hotel(doc)
+	# classify_corporate(doc)
+	# classify_hotel(doc)
 	classify_resident(doc)
 
 
@@ -23,8 +23,8 @@ def classify_lead_before_save(doc):
 	Classify Lead categories before save.
 	"""
 	classify_group(doc)
-	classify_corporate(doc)
-	classify_hotel(doc)
+	# classify_corporate(doc)
+	# classify_hotel(doc)
 	classify_resident(doc)
 
 

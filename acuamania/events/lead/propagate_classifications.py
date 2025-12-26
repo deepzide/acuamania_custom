@@ -6,6 +6,9 @@ from acuamania.utils.sync import with_sync_guard
 @with_sync_guard
 def propagate_classifications(doc, method=None):
 	"""Propagate Lead classifications to Contact and Customer."""
+	if getattr(frappe.flags, "skip_lead_to_contact_sync", False):
+		return
+
 	phone_number = (doc.phone or "").strip()
 	if not phone_number:
 		return
@@ -42,8 +45,15 @@ def _copy_categories(target_doc, categories):
 	if not hasattr(target_doc, "custom_customer_category"):
 		return
 
+	previous_skip_flag = getattr(frappe.flags, "skip_contact_to_lead_sync", False)
+	if target_doc.doctype == "Contact":
+		frappe.flags.skip_contact_to_lead_sync = True
+
 	target_doc.set("custom_customer_category", [])
 	for category in categories:
 		target_doc.append("custom_customer_category", {"customer_category": category})
 
-	target_doc.save(ignore_permissions=True)
+	try:
+		target_doc.save(ignore_permissions=True)
+	finally:
+		frappe.flags.skip_contact_to_lead_sync = previous_skip_flag

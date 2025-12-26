@@ -16,18 +16,6 @@
       "insert_after": "custom_customer_category"
     },
     {
-      "fieldname": "custom_has_hotel_voucher",
-      "label": "Posee Voucher de Hotel",
-      "fieldtype": "Check",
-      "insert_after": "custom_person_qty"
-    },
-    {
-      "fieldname": "is_corpo",
-      "label": "Es Corporativo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
-    },
-    {
       "fieldname": "custom_total_adults",
       "label": "Total Adultos",
       "fieldtype": "Int",
@@ -100,18 +88,6 @@
       "insert_after": "first_name"
     },
     {
-      "fieldname": "custom_has_hotel_voucher",
-      "label": "Posee Voucher de Hotel",
-      "fieldtype": "Check",
-      "insert_after": "custom_customer_category"
-    },
-    {
-      "fieldname": "is_corpo",
-      "label": "Es Corporativo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
-    },
-    {
       "fieldname": "custom_transcription_text",
       "label": "Texto de Transcripción",
       "fieldtype": "Text",
@@ -133,18 +109,6 @@
       "fieldtype": "Table MultiSelect",
       "options": "Customer__Customer_Category",
       "insert_after": "customer_name"
-    },
-    {
-      "fieldname": "custom_has_hotel_voucher",
-      "label": "Posee Voucher de Hotel",
-      "fieldtype": "Check",
-      "insert_after": "custom_customer_category"
-    },
-    {
-      "fieldname": "is_corpo",
-      "label": "Es Corporativo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
     },
     {
       "fieldname": "custom_total_adults",
@@ -187,22 +151,10 @@
       "insert_after": "contact_person"
     },
     {
-      "fieldname": "custom_has_hotel_voucher",
-      "label": "Posee Voucher de Hotel",
-      "fieldtype": "Check",
-      "insert_after": "custom_customer_category"
-    },
-    {
-      "fieldname": "is_corpo",
-      "label": "Es Corporativo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
-    },
-    {
       "fieldname": "custom_people_section",
       "label": "Personas del Grupo",
       "fieldtype": "Section Break",
-      "insert_after": "is_corpo"
+      "insert_after": "custom_customer_category"
     },
     {
       "fieldname": "custom_total_adults",
@@ -254,22 +206,10 @@
       "insert_after": "contact_person"
     },
     {
-      "fieldname": "custom_has_hotel_voucher",
-      "label": "Posee Voucher de Hotel",
-      "fieldtype": "Check",
-      "insert_after": "custom_customer_category"
-    },
-    {
-      "fieldname": "is_corpo",
-      "label": "Es Corporativo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
-    },
-    {
       "fieldname": "custom_people_section",
       "label": "Personas del Grupo",
       "fieldtype": "Section Break",
-      "insert_after": "is_corpo"
+      "insert_after": "custom_customer_category"
     },
     {
       "fieldname": "custom_total_adults",
@@ -306,18 +246,6 @@
       "fieldtype": "Table MultiSelect",
       "options": "Customer__Customer_Category",
       "insert_after": "customer_name"
-    },
-    {
-      "fieldname": "custom_has_hotel_voucher",
-      "label": "Posee Voucher de Hotel",
-      "fieldtype": "Check",
-      "insert_after": "custom_customer_category"
-    },
-    {
-      "fieldname": "is_corpo",
-      "label": "Es Corporativo",
-      "fieldtype": "Check",
-      "insert_after": "custom_has_hotel_voucher"
     },
     {
       "fieldname": "custom_person_qty",
