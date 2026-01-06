@@ -22,6 +22,9 @@ def classify_lead_before_save(doc):
 	"""
 	Classify Lead categories before save.
 	"""
+
+	if getattr(frappe.flags, "in_contact_propagation", False):
+		return
 	classify_group(doc)
 	# classify_corporate(doc)
 	# classify_hotel(doc)
@@ -116,10 +119,6 @@ def _append_if_missing(doc, category):
 
 
 def _remove_category(doc, category_name):
-	"""
-	Remove a category.
-	"""
-
-	preserved = [row for row in doc.custom_customer_category if row.customer_category != category_name]
-
-	doc.set("custom_customer_category", preserved)
+	for row in list(doc.custom_customer_category):
+		if row.customer_category == category_name:
+			doc.custom_customer_category.remove(row)
