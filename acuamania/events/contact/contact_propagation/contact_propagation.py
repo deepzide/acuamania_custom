@@ -9,43 +9,45 @@ from acuamania.utils.sync import with_sync_guard
 def contact_propagation(contact_doc, method=None):
 	"""Propagate Contact fields (source, territory, email, etc.) to all linked doctypes."""
 
-	for target_doctype, link_def in CONTACT_LINK_FIELDS.items():
-		_sync_linked_docs(contact_doc, target_doctype, link_def)
+	for target_doctype, mapping_dict in CONTACT_LINK_FIELDS.items():
+		_sync_linked_docs(contact_doc, target_doctype, mapping_dict)
 
 
-def _sync_linked_docs(contact_doc, target_doctype, link_def):
-	"""Find and update all draft documents linked to the Contact."""
-	link_field = link_def.get("field")
-	if not link_field:
-		return
+def _sync_linked_docs(contact_doc, target_doctype, mapping_dict):
+    target_field = mapping_dict.get("target_field")
+    contact_field = mapping_dict.get("contact_field")
 
-	link_value = contact_doc.name if link_field == "contact_person" else contact_doc.phone
-	if not link_value:
-		return
+    if not target_field or not contact_field:
+        return
 
-	if target_doctype == "Lead" and getattr(frappe.flags, "skip_contact_to_lead_sync", False):
-		return
+    link_value = contact_doc.get(contact_field)
+    if not link_value:
+        return
 
-	related_docs = frappe.get_all(
-		target_doctype,
-		filters={link_field: link_value, "docstatus": 0},
-		pluck="name",
-	)
+    if target_doctype == "Lead" and getattr(frappe.flags, "skip_contact_to_lead_sync", False):
+        return
 
-	if not related_docs:
-		return
+    related_docs = frappe.get_all(
+        target_doctype,
+        filters={target_field: link_value, "docstatus": 0},
+        pluck="name",
+    )
 
-	mapping = CONTACT_FIELD_MAPPING.get(target_doctype, {})
-	contact_data = contact_doc.as_dict()
+    if not related_docs:
+        return
 
-	for doc_name in related_docs:
-		try:
-			_apply_field_mapping(contact_doc, target_doctype, doc_name, mapping, contact_data)
-		except Exception as e:
-			frappe.log_error(
-				title=f"Contact Sync Error - {contact_doc.name}",
-				message=f"Failed updating {target_doctype} {doc_name}: {e}",
-			)
+    mapping = CONTACT_FIELD_MAPPING.get(target_doctype, {})
+    contact_data = contact_doc.as_dict()
+
+    for doc_name in related_docs:
+        try:
+            _apply_field_mapping(contact_doc, target_doctype, doc_name, mapping, contact_data)
+        except Exception as e:
+            frappe.log_error(
+                title=f"Contact Sync Error - {contact_doc.name}",
+                message=f"Failed updating {target_doctype} {doc_name}: {e}",
+            )
+
 
 
 def _apply_field_mapping(contact_doc, target_doctype, doc_name, mapping, contact_data):

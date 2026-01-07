@@ -1,9 +1,22 @@
 CONTACT_LINK_FIELDS = {
-	"Lead": {"field": "phone"},
-	"Opportunity": {"field": "phone"},
-	"Sales Order": {"field": "contact_person"},
-	"Customer": {"field": "mobile_no"},
+    "Lead": {
+        "target_field": "phone",
+        "contact_field": "phone",
+    },
+    "Opportunity": {
+        "target_field": "phone",
+        "contact_field": "phone",
+    },
+    "Sales Order": {
+        "target_field": "contact_person",
+        "contact_field": "name",
+    },
+    "Customer": {
+        "target_field": "mobile_no",
+        "contact_field": "mobile_no",
+    },
 }
+
 
 CONTACT_FIELD_MAPPING = {
 	"Lead": {
