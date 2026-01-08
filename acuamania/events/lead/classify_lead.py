@@ -1,4 +1,3 @@
-import frappe
 from acuamania.events.utils import classify_group, classify_customer_status, classify_resident
 from acuamania.utils.sync import with_sync_guard
 

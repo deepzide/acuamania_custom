@@ -180,10 +180,17 @@ doc_events = {
 		"before_insert": "acuamania.events.lead.before_insert.before_insert",
 		"before_save": "acuamania.events.lead.before_save.before_save",
 	},
+    "Opportunity": {
+		"before_insert": "acuamania.events.opportunity.before_insert.before_insert",
+    },
 	"Contact": {
 		"before_save": "acuamania.events.contact.before_save.before_save",
 		"on_update": "acuamania.events.contact.on_update.on_update",
 		"before_insert": "acuamania.events.contact.before_insert.before_insert",
+	},
+    "Customer": {
+		"before_insert": "acuamania.events.customer.before_insert.before_insert",
+		"after_insert": "acuamania.events.customer.after_insert.after_insert",
 	},
 	"Sales Order": {
 		"before_save": "acuamania.events.sales_order.before_save.before_save",
