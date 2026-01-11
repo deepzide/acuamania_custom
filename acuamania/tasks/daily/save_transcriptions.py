@@ -7,36 +7,41 @@ def save_transcriptions():
 	"""
 	Daily scheduled job.
 
-	Consolidates Contact.custom_transcription_text into a PRIVATE File DocType:
-	/private/files/TRS-<contact>-<date>.txt
-
-	Then appends that file URL to Contact.custom_transcriptions
-	and clears the buffer.
+	Iterates over all Contacts with buffered transcriptions and
+	exports them into private File records, appending history and
+	clearing the buffer.
 	"""
-
 	today = frappe.utils.nowdate()
 
-	contacts = frappe.get_all(
+	contact_names = frappe.get_all(
 		"Contact",
 		filters=[["custom_transcription_text", "!=", ""]],
-		fields=["name", "custom_transcription_text"],
+		pluck="name",
 	)
 
-	for row in contacts:
-		contact = frappe.get_doc("Contact", row.name)
-		raw_text = contact.custom_transcription_text
-
-		cleaned = sanitize(raw_text)
-		if not cleaned:
-			continue
-
-		file_doc = create_private_file(contact.name, today, cleaned)
-
-		append_history(contact, file_doc, today)
-
-		clear_buffer(contact)
+	for contact_name in contact_names:
+		contact = frappe.get_doc("Contact", contact_name)
+		process_contact_transcription(contact, today)
 
 	frappe.db.commit()
+
+
+def process_contact_transcription(contact, date):
+	"""
+	Process a single Contact transcription buffer.
+	Returns True if processed, False if skipped.
+	"""
+	raw_text = contact.custom_transcription_text
+	cleaned = sanitize(raw_text)
+
+	if not cleaned:
+		return False
+
+	file_doc = create_private_file(contact.name, date, cleaned)
+	append_history(contact, file_doc, date)
+	clear_buffer(contact)
+
+	return True
 
 
 def sanitize(text: str) -> str:
@@ -47,16 +52,13 @@ def sanitize(text: str) -> str:
 
 def create_private_file(contact_name: str, date: str, content: str):
 	"""
-	Creates a File DocType stored under:
+	Creates a private File:
 	/private/files/TRS-<contact>-<date>.txt
-
-	Ensures the /private/files directory exists (important for tests).
 	"""
 
-	# --------------------------------------------------------------
-	# FIX: Ensure private files directory exists during test runs
-	# --------------------------------------------------------------
-	private_files_path = os.path.join(frappe.get_site_path(), "private", "files")
+	private_files_path = os.path.join(
+		frappe.get_site_path(), "private", "files"
+	)
 	os.makedirs(private_files_path, exist_ok=True)
 
 	filename = f"TRS-{contact_name}-{date}.txt"
@@ -76,20 +78,24 @@ def create_private_file(contact_name: str, date: str, content: str):
 	)
 
 	file_doc.insert(ignore_permissions=True)
-
 	return file_doc
 
 
 def append_history(contact, file_doc, date):
 	"""
-	Append a row to Contact.custom_transcriptions.
-	Avoids creating duplicate entries for the same date.
+	Appends a history row if not already present for the given date.
 	"""
 	for row in contact.get("custom_transcriptions") or []:
 		if str(row.date) == str(date):
 			return
 
-	contact.append("custom_transcriptions", {"date": date, "transcription_file": file_doc.file_url})
+	contact.append(
+		"custom_transcriptions",
+		{
+			"date": date,
+			"transcription_file": file_doc.file_url,
+		},
+	)
 
 
 def clear_buffer(contact):
